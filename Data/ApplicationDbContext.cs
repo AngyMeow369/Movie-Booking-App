@@ -20,6 +20,17 @@ namespace Movie_Booking_App.Data
         {
             base.OnModelCreating(builder);
 
+            // Configure decimal precision for Booking.TotalAmount
+            builder.Entity<Booking>()
+                .Property(b => b.TotalAmount)
+                .HasPrecision(18, 2); // 18 total digits, 2 decimal places
+
+            // Configure decimal precision for ShowTime.TicketPrice
+            builder.Entity<ShowTime>()
+                .Property(s => s.TicketPrice)
+                .HasPrecision(18, 2); // 18 total digits, 2 decimal places
+
+            // Your existing configurations
             builder.Entity<ShowTime>()
                 .HasOne(st => st.Movie)
                 .WithMany(m => m.ShowTimes)
