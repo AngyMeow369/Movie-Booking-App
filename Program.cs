@@ -91,4 +91,6 @@ app.MapRazorPages();
 
 app.MapGet("/", () => Results.Redirect("/Account/Login"));
 
+
+
 app.Run();
