@@ -5,7 +5,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Movie_Booking_App</RootNamespace>
+    <UserSecretsId>295307bc-82e1-4546-98d5-2a737b05429b</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="Pages\Account\Register.cshtml" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.9" />
@@ -17,9 +22,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\" />
     <Folder Include="Pages\Admin\" />
     <Folder Include="Pages\User\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\Account\Register.cshtml" />
   </ItemGroup>
 
 </Project>
