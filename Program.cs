@@ -20,14 +20,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// Add Authorization Policies
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-    options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
-});
-
-// Add services to the container.
+// ? ADD THIS: Identity Pages
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
@@ -42,8 +35,8 @@ using (var scope = app.Services.CreateScope())
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
-        // Create database if not exists
-        context.Database.EnsureCreated();
+        // Apply pending migrations
+        await context.Database.MigrateAsync();
 
         // Seed Roles
         if (!await roleManager.RoleExistsAsync("Admin"))
@@ -69,6 +62,7 @@ using (var scope = app.Services.CreateScope())
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(user, "Admin");
+                Console.WriteLine("? Admin user created successfully!");
             }
         }
     }
@@ -89,8 +83,10 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthentication();  // ? ADD THIS LINE
+app.UseAuthentication();
 app.UseAuthorization();
+
+// ? ADD THIS: Map Razor Pages (including Identity pages)
 app.MapRazorPages();
 
 app.Run();
