@@ -12,7 +12,7 @@ using Movie_Booking_App.Data;
 namespace Movie_Booking_App.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251013095917_AddDecimalPrecision")]
+    [Migration("20251013095905_AddDecimalPrecision")]
     partial class AddDecimalPrecision
     {
         /// <inheritdoc />

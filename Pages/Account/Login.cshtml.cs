@@ -38,12 +38,11 @@ namespace Movie_Booking_App.Pages.Account
 
         public void OnGet(string? returnUrl = null)
         {
-            ReturnUrl = returnUrl ?? Url.Content("~/");
+
         }
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
-            ReturnUrl = returnUrl ?? Url.Content("~/");
 
             if (ModelState.IsValid)
             {

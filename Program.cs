@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Movie_Booking_App.Data;
 using Movie_Booking_App.Models;
@@ -24,6 +24,10 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
+//// ✅ 4. Use authentication & authorization
+app.UseAuthentication();
+app.UseAuthorization();
 
 // SEED ROLES AND ADMIN USER
 using (var scope = app.Services.CreateScope())
@@ -89,4 +93,5 @@ app.UseAuthorization();
 // ? ADD THIS: Map Razor Pages (including Identity pages)
 app.MapRazorPages();
 
+app.MapGet("/", () => Results.Redirect("/Account/Login"));
 app.Run();

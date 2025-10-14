@@ -35,9 +35,16 @@
                         <button type="submit" class="btn btn-primary btn-lg">Login</button>
                     </div>
                 </form>
-                
+
                 <div class="text-center mt-4">
-                    <p class="mb-2">Don't have an account? <a asp-page="/Account/Register" class="fw-bold">Register here</a></p>
+                    <p class="mb-2">Don't have an account?</p>
+                    <button class="btn btn-primary fw-bold"
+                            id="RegisterButton"
+                            data-url='@Url.Page("/Account/Register", null, new { handler = "Register" })'>
+                        Register Here
+                    </button>
+                </div>
+
                     <div class="mt-3 p-3 bg-light rounded">
                         @* <h6>Test Admin Account:</h6>
                         <p class="mb-1"><strong>Email:</strong> admin@moviebook.com</p>
@@ -52,3 +59,10 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+<script>
+    document.getElementById('RegisterButton').addEventListener('click', function() {
+        var url = this.getAttribute('data-url');
+        // Navigate to the Razor Page OnGet handler
+        window.location.href = url;
+    });
+</script>
