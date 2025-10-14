@@ -1,0 +1,76 @@
+﻿@page
+@model Movie_Booking_App.Pages.User.IndexModel
+@using Microsoft.AspNetCore.Authorization
+@using Movie_Booking_App.Models
+
+@attribute [Authorize]
+
+@{
+    ViewData["Title"] = "User Dashboard";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-primary">Welcome, @Model.UserName!</h2>
+
+    <div class="row">
+        <!-- Profile Section -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">Profile</div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> @Model.UserName</p>
+                    <p><strong>Email:</strong> @Model.Email</p>
+                    <a asp-page="/Account/EditProfile" class="btn btn-sm btn-outline-primary">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Section -->
+        <div class="col-md-8 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">My Bookings</div>
+                <div class="card-body">
+                    @if (Model.Bookings.Any())
+                    {
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Movie</th>
+                                    <th>Date</th>
+                                    <th>Seats</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var booking in Model.Bookings)
+                                {
+                                    <tr>
+                                        <td>@booking.ShowTime.Movie.Title</td>
+                                        <td>@booking.ShowTime.ShowDateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
+                                        <td>@booking.NumberOfTickets</td>
+                                        <td>@booking.TotalAmount.ToString("C")</td>
+                                        <td>
+                                            @if (booking.Status == BookingStatus.Confirmed)
+                                            {
+                                                <span class="badge bg-success">Confirmed</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Cancelled</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    }
+                    else
+                    {
+                        <p>No bookings found.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
