@@ -117,60 +117,76 @@ namespace Movie_Booking_App.Pages.ShowTimes
 
         private async Task ValidateShowTime()
         {
+            Console.WriteLine($"VALIDATION CHECK - MovieId: {ShowTime.MovieId}, TheaterId: {ShowTime.TheaterId}");
+
+            // Remove the basic required checks since the [Required] attributes should handle this
+            // if (ShowTime.MovieId == 0) ... REMOVE THESE LINES
+
+            // Only proceed with additional validation if basic fields are valid
+            if (ShowTime.MovieId <= 0)
+            {
+                ModelState.AddModelError("ShowTime.MovieId", "Please select a valid movie.");
+                return;
+            }
+
+            if (ShowTime.TheaterId <= 0)
+            {
+                ModelState.AddModelError("ShowTime.TheaterId", "Please select a valid theater.");
+                return;
+            }
+
             // Validate Movie exists and is active
-            var movieExists = await _context.Movies
-                .AnyAsync(m => m.Id == ShowTime.MovieId && m.IsActive);
-            if (!movieExists)
+            var movie = await _context.Movies
+                .FirstOrDefaultAsync(m => m.Id == ShowTime.MovieId && m.IsActive);
+            if (movie == null)
             {
                 ModelState.AddModelError("ShowTime.MovieId", "Selected movie is not available.");
             }
 
             // Validate Theater exists and is active
-            var theaterExists = await _context.Theaters
-                .AnyAsync(t => t.Id == ShowTime.TheaterId && t.IsActive);
-            if (!theaterExists)
+            var theater = await _context.Theaters
+                .FirstOrDefaultAsync(t => t.Id == ShowTime.TheaterId && t.IsActive);
+            if (theater == null)
             {
                 ModelState.AddModelError("ShowTime.TheaterId", "Selected theater is not available.");
             }
 
-            // Validate ShowDateTime is in the future
-            if (ShowTime.ShowDateTime <= DateTime.Now)
+            // Only check other validations if movie and theater are valid
+            if (movie != null && theater != null)
             {
-                ModelState.AddModelError("ShowTime.ShowDateTime", "Show time must be in the future.");
-            }
-
-            // Validate against very distant future dates
-            if (ShowTime.ShowDateTime > DateTime.Now.AddYears(1))
-            {
-                ModelState.AddModelError("ShowTime.ShowDateTime", "Show time cannot be more than 1 year in the future.");
-            }
-
-            // Validate positive values
-            if (ShowTime.TicketPrice <= 0)
-            {
-                ModelState.AddModelError("ShowTime.TicketPrice", "Ticket price must be greater than 0.");
-            }
-
-            if (ShowTime.TotalSeats <= 0)
-            {
-                ModelState.AddModelError("ShowTime.TotalSeats", "Total seats must be greater than 0.");
-            }
-
-            // Check for overlapping show times (same theater within 3 hours)
-            if (movieExists && theaterExists && ShowTime.ShowDateTime > DateTime.Now)
-            {
-                var existingShowTime = await _context.ShowTimes
-                    .Include(st => st.Movie)
-                    .Where(st => st.TheaterId == ShowTime.TheaterId)
-                    .Where(st => st.ShowDateTime >= ShowTime.ShowDateTime.AddHours(-3) &&
-                                 st.ShowDateTime <= ShowTime.ShowDateTime.AddHours(3))
-                    .FirstOrDefaultAsync();
-
-                if (existingShowTime != null)
+                // Validate ShowDateTime is in the future
+                if (ShowTime.ShowDateTime <= DateTime.Now)
                 {
-                    ModelState.AddModelError("ShowTime.ShowDateTime",
-                        $"Theater is already booked for another show at {existingShowTime.ShowDateTime:g} " +
-                        $"(Movie: {existingShowTime.Movie?.Title}). Please choose a different time.");
+                    ModelState.AddModelError("ShowTime.ShowDateTime", "Show time must be in the future.");
+                }
+
+                // Validate positive values
+                if (ShowTime.TicketPrice <= 0)
+                {
+                    ModelState.AddModelError("ShowTime.TicketPrice", "Ticket price must be greater than 0.");
+                }
+
+                if (ShowTime.TotalSeats <= 0)
+                {
+                    ModelState.AddModelError("ShowTime.TotalSeats", "Total seats must be greater than 0.");
+                }
+
+                // Check for overlapping show times
+                if (ShowTime.ShowDateTime > DateTime.Now)
+                {
+                    var existingShowTime = await _context.ShowTimes
+                        .Include(st => st.Movie)
+                        .Where(st => st.TheaterId == ShowTime.TheaterId)
+                        .Where(st => st.ShowDateTime >= ShowTime.ShowDateTime.AddHours(-3) &&
+                                     st.ShowDateTime <= ShowTime.ShowDateTime.AddHours(3))
+                        .FirstOrDefaultAsync();
+
+                    if (existingShowTime != null)
+                    {
+                        ModelState.AddModelError("ShowTime.ShowDateTime",
+                            $"Theater is already booked for another show at {existingShowTime.ShowDateTime:g} " +
+                            $"(Movie: {existingShowTime.Movie?.Title}). Please choose a different time.");
+                    }
                 }
             }
         }

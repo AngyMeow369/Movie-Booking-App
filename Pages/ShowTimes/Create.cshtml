@@ -15,7 +15,7 @@
                     <!-- Show validation errors -->
                     <div asp-validation-summary="All" class="alert alert-danger"></div>
                     
-                    <form method="post">
+                    <form method="post" novalidate>
                         <div class="mb-3">
                             <label asp-for="ShowTime.MovieId" class="form-label">Movie *</label>
                             <select asp-for="ShowTime.MovieId" class="form-control" asp-items="ViewBag.MovieId">

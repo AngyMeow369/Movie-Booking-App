@@ -45,7 +45,28 @@ namespace Movie_Booking_App.Pages.ShowTimes
                 return Page();
             }
 
-            _context.Attach(ShowTime).State = EntityState.Modified;
+            // ✅ FIX: Load existing showtime and update only allowed fields
+            var existingShowTime = await _context.ShowTimes.FindAsync(ShowTime.Id);
+            if (existingShowTime == null)
+            {
+                return NotFound();
+            }
+
+            // ✅ Update only the fields that are allowed to change
+            existingShowTime.ShowDateTime = ShowTime.ShowDateTime;
+            existingShowTime.TicketPrice = ShowTime.TicketPrice;
+            existingShowTime.TotalSeats = ShowTime.TotalSeats;
+            existingShowTime.AvailableSeats = ShowTime.AvailableSeats;
+            existingShowTime.Screen = ShowTime.Screen;
+            existingShowTime.Format = ShowTime.Format;
+            existingShowTime.Language = ShowTime.Language;
+            existingShowTime.IsActive = ShowTime.IsActive;
+
+            // ✅ Recalculate available seats if total seats changed
+            if (existingShowTime.TotalSeats < existingShowTime.AvailableSeats)
+            {
+                existingShowTime.AvailableSeats = existingShowTime.TotalSeats;
+            }
 
             try
             {

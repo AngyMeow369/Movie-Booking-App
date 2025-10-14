@@ -45,15 +45,27 @@ namespace Movie_Booking_App.Pages.ShowTimes
                 return NotFound();
             }
 
-            var showTime = await _context.ShowTimes.FindAsync(id);
+            // ✅ FIX: Include Bookings to handle cascade delete or check for existing bookings
+            var showTime = await _context.ShowTimes
+                .Include(s => s.Bookings)  // Add this line
+                .FirstOrDefaultAsync(s => s.Id == id);
+
             if (showTime != null)
             {
-                ShowTime = showTime;
-                _context.ShowTimes.Remove(ShowTime);
+                // ✅ Check if there are existing bookings
+                if (showTime.Bookings.Any())
+                {
+                    ModelState.AddModelError("", "Cannot delete show time with existing bookings.");
+                    return await OnGetAsync(id); // Reload the page with error
+                }
+
+                _context.ShowTimes.Remove(showTime);
                 await _context.SaveChangesAsync();
             }
 
             return RedirectToPage("./Index");
         }
+
+
     }
 }
