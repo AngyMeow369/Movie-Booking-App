@@ -9,6 +9,7 @@ namespace Movie_Booking_App.Pages.Account
     public class LoginModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<LoginModel> _logger;
 
         [BindProperty]
@@ -30,9 +31,12 @@ namespace Movie_Booking_App.Pages.Account
             public bool RememberMe { get; set; }
         }
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ApplicationUser> signInManager,
+                         UserManager<ApplicationUser> userManager,
+                         ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -53,6 +57,14 @@ namespace Movie_Booking_App.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    // ✅ ADD THIS: Check if user is admin and redirect accordingly
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
+                    {
+                        return RedirectToPage("/Admin/Index");
+                    }
+
                     return LocalRedirect(ReturnUrl);
                 }
 
