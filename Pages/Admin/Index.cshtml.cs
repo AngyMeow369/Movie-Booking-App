@@ -20,6 +20,7 @@ namespace Movie_Booking_App.Pages.Admin
         public int TotalTheaters { get; set; }
         public int TotalUsers { get; set; }
         public int TotalBookings { get; set; }
+        public int TotalShowTimes { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -27,6 +28,7 @@ namespace Movie_Booking_App.Pages.Admin
             TotalTheaters = await _context.Theaters.CountAsync();
             TotalUsers = await _context.Users.CountAsync();
             TotalBookings = await _context.Bookings.CountAsync();
+            TotalShowTimes = await _context.ShowTimes.CountAsync(); // Add this line
         }
     }
 }

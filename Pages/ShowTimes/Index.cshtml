@@ -1,0 +1,75 @@
+﻿@page
+@model Movie_Booking_App.Pages.ShowTimes.IndexModel
+@{
+    ViewData["Title"] = "Show Times";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Show Times</h1>
+        <a asp-page="Create" class="btn btn-primary">Add New Show Time</a>
+    </div>
+
+    @if (Model.ShowTimes.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Movie</th>
+                        <th>Theater</th>
+                        <th>Date & Time</th>
+                        <th>Screen</th>
+                        <th>Format</th>
+                        <th>Price</th>
+                        <th>Seats</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var showTime in Model.ShowTimes)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@showTime.Movie.Title</strong><br>
+                                <small class="text-muted">@showTime.Movie.Genre</small>
+                            </td>
+                            <td>
+                                @showTime.Theater.Name<br>
+                                <small class="text-muted">@showTime.Theater.City</small>
+                            </td>
+                            <td>@showTime.ShowDateTime.ToString("MMM dd, yyyy hh:mm tt")</td>
+                            <td>@showTime.Screen</td>
+                            <td>
+                                <span class="badge bg-info">@showTime.Format</span>
+                            </td>
+                            <td>$@showTime.TicketPrice</td>
+                            <td>
+                                <small>@showTime.AvailableSeats / @showTime.TotalSeats available</small>
+                            </td>
+                            <td>
+                                <span class="badge @(showTime.IsActive ? "bg-success" : "bg-secondary")">
+                                    @(showTime.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-page="Edit" asp-route-id="@showTime.Id" class="btn btn-warning">Edit</a>
+                                    <a asp-page="Delete" asp-route-id="@showTime.Id" class="btn btn-danger">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <h4>No Show Times Found</h4>
+            <p>There are no show times scheduled yet. <a asp-page="Create">Add the first show time</a>.</p>
+        </div>
+    }
+</div>

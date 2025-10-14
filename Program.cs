@@ -88,6 +88,7 @@ app.UseAuthorization();
 
 // ? ADD THIS: Map Razor Pages (including Identity pages)
 app.MapRazorPages();
+
 app.MapGet("/", () => Results.Redirect("/Account/Login"));
 
 app.Run();
