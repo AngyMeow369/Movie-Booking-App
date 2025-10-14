@@ -16,15 +16,16 @@
                         <input type="hidden" asp-for="ShowTime.Id" />
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         
+                        <!-- ✅ FIXED: Added null-conditional operators -->
                         <div class="mb-3">
                             <label class="form-label">Movie</label>
-                            <input class="form-control" value="@Model.ShowTime.Movie.Title" readonly />
+                            <input class="form-control" value="@Model.ShowTime.Movie?.Title" readonly />
                             <small class="text-muted">Movie cannot be changed</small>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Theater</label>
-                            <input class="form-control" value="@Model.ShowTime.Theater.Name - @Model.ShowTime.Theater.City" readonly />
+                            <input class="form-control" value="@Model.ShowTime.Theater?.Name - @Model.ShowTime.Theater?.City" readonly />
                             <small class="text-muted">Theater cannot be changed</small>
                         </div>
 

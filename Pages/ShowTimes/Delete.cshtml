@@ -18,11 +18,12 @@
                     </div>
                     
                     <dl class="row">
+                        <!-- ✅ FIXED: Added null-conditional operators -->
                         <dt class="col-sm-3">Movie:</dt>
-                        <dd class="col-sm-9">@Model.ShowTime.Movie.Title</dd>
+                        <dd class="col-sm-9">@Model.ShowTime.Movie?.Title</dd>
                         
                         <dt class="col-sm-3">Theater:</dt>
-                        <dd class="col-sm-9">@Model.ShowTime.Theater.Name - @Model.ShowTime.Theater.City</dd>
+                        <dd class="col-sm-9">@Model.ShowTime.Theater?.Name - @Model.ShowTime.Theater?.City</dd>
                         
                         <dt class="col-sm-3">Date & Time:</dt>
                         <dd class="col-sm-9">@Model.ShowTime.ShowDateTime.ToString("MMM dd, yyyy hh:mm tt")</dd>

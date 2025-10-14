@@ -23,6 +23,14 @@ namespace Movie_Booking_App.Pages.ShowTimes
                 .Include(s => s.Theater)
                 .OrderBy(s => s.ShowDateTime)
                 .ToListAsync();
+
+            // DEBUG: Show what's loaded
+            Console.WriteLine($"=== SHOWTIMES INDEX: Found {ShowTimes.Count} show times ===");
+            foreach (var show in ShowTimes)
+            {
+                Console.WriteLine($"Show {show.Id}: {show.Movie?.Title} at {show.Theater?.Name} - {show.ShowDateTime}");
+            }
+            Console.WriteLine("==========================================");
         }
     }
 }

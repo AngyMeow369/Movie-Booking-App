@@ -32,12 +32,13 @@
                     {
                         <tr>
                             <td>
-                                <strong>@showTime.Movie.Title</strong><br>
-                                <small class="text-muted">@showTime.Movie.Genre</small>
+                                <!-- ✅ FIXED: Added null-conditional operators -->
+                                <strong>@showTime.Movie?.Title</strong><br>
+                                <small class="text-muted">@showTime.Movie?.Genre</small>
                             </td>
                             <td>
-                                @showTime.Theater.Name<br>
-                                <small class="text-muted">@showTime.Theater.City</small>
+                                @showTime.Theater?.Name<br>
+                                <small class="text-muted">@showTime.Theater?.City</small>
                             </td>
                             <td>@showTime.ShowDateTime.ToString("MMM dd, yyyy hh:mm tt")</td>
                             <td>@showTime.Screen</td>
