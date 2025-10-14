@@ -62,7 +62,7 @@ using (var scope = app.Services.CreateScope())
                 EmailConfirmed = true
             };
 
-            var result = await userManager.CreateAsync(user, "Admin123!");
+            var result = await userManager.CreateAsync(user, "Admin123");
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(user, "Admin");
@@ -94,4 +94,7 @@ app.UseAuthorization();
 app.MapRazorPages();
 
 app.MapGet("/", () => Results.Redirect("/Account/Login"));
+
+
+
 app.Run();

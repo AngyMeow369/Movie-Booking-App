@@ -1,0 +1,86 @@
+﻿@page
+@model Movie_Booking_App.Pages.Movies.CreateModel
+@{
+    ViewData["Title"] = "Add New Movie";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Add New Movie</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div class="mb-3">
+                            <label asp-for="Movie.Title" class="form-label"></label>
+                            <input asp-for="Movie.Title" class="form-control" />
+                            <span asp-validation-for="Movie.Title" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Movie.Description" class="form-label"></label>
+                            <textarea asp-for="Movie.Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Movie.Description" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Movie.Genre" class="form-label"></label>
+                                    <input asp-for="Movie.Genre" class="form-control" />
+                                    <span asp-validation-for="Movie.Genre" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Movie.Duration" class="form-label"></label>
+                                    <input asp-for="Movie.Duration" type="number" class="form-control" />
+                                    <span asp-validation-for="Movie.Duration" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Movie.Language" class="form-label"></label>
+                                    <input asp-for="Movie.Language" class="form-control" />
+                                    <span asp-validation-for="Movie.Language" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Movie.ReleaseDate" class="form-label"></label>
+                                    <input asp-for="Movie.ReleaseDate" type="date" class="form-control" />
+                                    <span asp-validation-for="Movie.ReleaseDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Movie.PosterUrl" class="form-label">Poster URL</label>
+                            <input asp-for="Movie.PosterUrl" class="form-control" placeholder="https://example.com/poster.jpg" />
+                            <span asp-validation-for="Movie.PosterUrl" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input asp-for="Movie.IsActive" class="form-check-input" />
+                            <label asp-for="Movie.IsActive" class="form-check-label">Active (visible to users)</label>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Create Movie</button>
+                            <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

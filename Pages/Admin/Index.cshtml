@@ -1,0 +1,150 @@
+﻿@page
+@model Movie_Booking_App.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+    <!-- Admin Header with Logout -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1>Admin Dashboard</h1>
+                    <p class="lead">Welcome, Administrator! Manage your movie booking system.</p>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+
+   <!-- Quick Stats -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Total Movies</h5>
+                <h2 class="card-text">@Model.TotalMovies</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Total Theaters</h5>
+                <h2 class="card-text">@Model.TotalTheaters</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Total Users</h5>
+                <h2 class="card-text">@Model.TotalUsers</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Total Bookings</h5>
+                <h2 class="card-text">@Model.TotalBookings</h2>
+            </div>
+        </div>
+    </div>
+    <!-- Add this new card for Show Times -->
+    <div class="col-md-3 mt-3">
+        <div class="card text-white bg-secondary">
+            <div class="card-body">
+                <h5 class="card-title">Total Show Times</h5>
+                <h2 class="card-text">@Model.TotalShowTimes</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+   <!-- Management Cards -->
+<div class="row">
+    <!-- Movie Management Card (existing) -->
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Movie Management</h5>
+            </div>
+            <div class="card-body">
+                <p>Manage movies, showtimes, and pricing.</p>
+                <div class="d-grid gap-2">
+                    <a asp-page="/Movies/Index" class="btn btn-outline-primary">View All Movies</a>
+                    <a asp-page="/Movies/Create" class="btn btn-outline-success">Add New Movie</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theater Management Card (existing) -->
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Theater Management</h5>
+            </div>
+            <div class="card-body">
+                <p>Manage theaters, screens, and seating.</p>
+                <div class="d-grid gap-2">
+                    <a asp-page="/Theaters/Index" class="btn btn-outline-primary">View Theaters</a>
+                    <a asp-page="/Theaters/Create" class="btn btn-outline-success">Add New Theater</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Show Time Management Card (NEW) -->
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Show Time Management</h5>
+            </div>
+            <div class="card-body">
+                <p>Manage movie showtimes, scheduling, and pricing.</p>
+                <div class="d-grid gap-2">
+                    <a asp-page="/ShowTimes/Index" class="btn btn-outline-primary">View All Show Times</a>
+                    <a asp-page="/ShowTimes/Create" class="btn btn-outline-success">Add New Show Time</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management Card (existing) -->
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">User Management</h5>
+            </div>
+            <div class="card-body">
+                <p>Manage users and view booking history.</p>
+                <div class="d-grid gap-2">
+                    <a asp-page="/Admin/Users" class="btn btn-outline-primary">View Users</a>
+                    <a asp-page="/Admin/CreateUser" class="btn btn-outline-success">Create User</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a asp-page="/Movies/Create" class="btn btn-primary">Add Movie</a>
+                        <a asp-page="/Theaters/Create" class="btn btn-primary">Add Theater</a>
+                        <a asp-page="/Admin/CreateUser" class="btn btn-primary">Create User</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

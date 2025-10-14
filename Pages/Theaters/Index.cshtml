@@ -1,0 +1,49 @@
+﻿@page
+@model Movie_Booking_App.Pages.Theaters.IndexModel
+@{
+    ViewData["Title"] = "Theaters";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Theaters</h1>
+        <a asp-page="Create" class="btn btn-primary">Add New Theater</a>
+    </div>
+
+    @if (Model.Theaters.Any())
+    {
+        <div class="row">
+            @foreach (var theater in Model.Theaters)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@theater.Name</h5>
+                            <p class="card-text">
+                                <strong>Location:</strong> @theater.Location<br>
+                                <strong>City:</strong> @theater.City
+                            </p>
+                            <span class="badge @(theater.IsActive ? "bg-success" : "bg-secondary")">
+                                @(theater.IsActive ? "Active" : "Inactive")
+                            </span>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex gap-2">
+                                <a asp-page="Edit" asp-route-id="@theater.Id" class="btn btn-warning btn-sm">Edit</a>
+                                <a asp-page="Delete" asp-route-id="@theater.Id" class="btn btn-danger btn-sm">Delete</a>
+                                <a asp-page="/ShowTimes/Create" asp-route-theaterId="@theater.Id" class="btn btn-info btn-sm">Add Show</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <h4>No Theaters Found</h4>
+            <p>There are no theaters in the database yet. <a asp-page="Create">Add the first theater</a>.</p>
+        </div>
+    }
+</div>
