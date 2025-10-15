@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Movie_Booking_App.Data;
@@ -13,16 +14,20 @@ namespace Movie_Booking_App.Pages.User
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signManager;
 
-        public string UserName { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
 
         public List<Booking> Bookings { get; set; } = new();
+        public List<Movie> AvailableMovies { get; set; } = new();
 
-        public IndexModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+
+        public IndexModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signManager)
         {
             _context = context;
             _userManager = userManager;
+            _signManager = signManager;
         }
 
         public async Task OnGetAsync()
@@ -31,7 +36,7 @@ namespace Movie_Booking_App.Pages.User
             if (user == null)
                 return;
 
-            UserName = user.UserName ?? string.Empty;
+            FullName = user.FullName ?? string.Empty;
             Email = user.Email ?? string.Empty;
 
             // ✅ Fetch user's bookings + showtime + movie
@@ -41,6 +46,19 @@ namespace Movie_Booking_App.Pages.User
                 .ThenInclude(s => s.Movie)         // include movie data
                 .OrderByDescending(b => b.BookingDate)
                 .ToList();
+
+            //Fetch Avilable movies
+            AvailableMovies = await _context.Movies
+                .Where(m => m.IsActive)
+                .OrderBy(m => m.Title)
+                .ToListAsync();
+        }
+
+        //This method runs when you click logout
+        public async Task<IActionResult> OnPostLogoutAsync()
+        {
+            await _signManager.SignOutAsync(); //clears login cookie
+            return RedirectToPage("/Account/Login"); //redirects to login page
         }
     }
 }

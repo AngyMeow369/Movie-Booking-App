@@ -47,7 +47,6 @@ namespace Movie_Booking_App.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
-
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(
@@ -57,20 +56,28 @@ namespace Movie_Booking_App.Pages.Account
                 {
                     _logger.LogInformation("User logged in.");
 
-                    // ✅ ADD THIS: Check if user is admin and redirect accordingly
+                    // ✅ Check if user is admin
                     var user = await _userManager.FindByEmailAsync(Input.Email);
                     if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
                     {
                         return RedirectToPage("/Admin/Index");
                     }
 
-                    return LocalRedirect(ReturnUrl);
+                    // ✅ If returnUrl is empty, redirect to user index
+                    if (string.IsNullOrEmpty(returnUrl))
+                    {
+                        return RedirectToPage("/User/Index");
+                    }
+
+                    return LocalRedirect(returnUrl);
                 }
 
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             }
 
+            // If we reach here, something failed, redisplay the form
             return Page();
         }
+
     }
 }

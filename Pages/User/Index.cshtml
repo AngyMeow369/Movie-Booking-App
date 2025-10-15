@@ -9,18 +9,31 @@
     ViewData["Title"] = "User Dashboard";
 }
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4 text-primary">Welcome, @Model.UserName!</h2>
+<!-- Navbar with Logout Button -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <div class="container-fluid">
+        <h4 class="navbar-brand text-primary mb-0">🎬 User Dashboard</h4>
 
+        <div class="d-flex align-items-center">
+            <span class="me-3 fw-semibold">Welcome, @Model.FullName!</span>
+
+            @* <form method="post" asp-page-handler="Logout" class="mb-0">
+                <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
+            </form> *@
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
     <div class="row">
         <!-- Profile Section -->
         <div class="col-md-4 mb-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">Profile</div>
                 <div class="card-body">
-                    <p><strong>Name:</strong> @Model.UserName</p>
+                    <p><strong>Name:</strong> @Model.FullName</p>
                     <p><strong>Email:</strong> @Model.Email</p>
-                    <a asp-page="/Account/EditProfile" class="btn btn-sm btn-outline-primary">Edit Profile</a>
+                    @* <a asp-page="/Account/EditProfile" class="btn btn-sm btn-outline-primary">Edit Profile</a> *@
                 </div>
             </div>
         </div>
@@ -62,7 +75,6 @@
                                     </tr>
                                 }
                             </tbody>
-
                         </table>
                     }
                     else
@@ -72,5 +84,34 @@
                 </div>
             </div>
         </div>
+        <!-- Available Movies Section -->
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-info text-white">Available Movies</div>
+            <div class="card-body">
+                @if (Model.AvailableMovies.Any())
+                {
+                    <div class="row">
+                        @foreach (var movie in Model.AvailableMovies)
+                        {
+                            <div class="col-md-3 mb-3">
+                                <div class="card h-100">
+                                    <img src="@movie.PosterUrl" class="card-img-top" alt="@movie.Title" style="height:200px; object-fit:cover;">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">@movie.Title</h5>
+                                        <p class="card-text">@movie.Genre</p>
+                                        <a asp-page="/User/BookMovie" asp-route-id="@movie.Id" class="btn btn-sm btn-primary mt-auto">Book Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p>No movies available for booking at the moment.</p>
+                }
+            </div>
+        </div>
+
     </div>
 </div>

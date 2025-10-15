@@ -109,18 +109,29 @@
                                         <span class="admin-badge">ADMIN</span>
                                     }
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#">👤 My Profile</a></li>
-                                    <li><a class="dropdown-item" href="#">⚙️ Settings</a></li>
-                                    <li><hr class="dropdown-divider"></li>
+                                <ul class="dropdown-menu dropdown-menu-end p-2">
                                     <li>
-                                        <form asp-page="/Account/Logout" method="post">
-                                            <button type="submit" class="dropdown-item text-danger">🚪 Logout</button>
+                                        <a class="dropdown-item d-flex align-items-center" asp-page="/Account/EditProfile">
+                                            👤 Edit Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center" href="#">
+                                            ⚙️ Settings
+                                        </a>
+                                    </li>
+                                    <li class="my-2">
+                                        <form method="post" asp-page-handler="Logout" class="mb-0">
+                                            <button type="submit" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center">
+                                                🚪 Logout
+                                            </button>
                                         </form>
                                     </li>
+                                    <li><hr class="dropdown-divider"></li>
                                 </ul>
                             </li>
                         </ul>
+
                     </div>
                 }
                 else
