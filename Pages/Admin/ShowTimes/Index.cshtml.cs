@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Movie_Booking_App.Data;
 using Movie_Booking_App.Models;
 
-namespace Movie_Booking_App.Pages.ShowTimes
+namespace Movie_Booking_App.Pages.Admin.ShowTimes
 {
     public class IndexModel : PageModel
     {

@@ -1,5 +1,5 @@
 ﻿@page
-@model Movie_Booking_App.Pages.ShowTimes.CreateModel
+@model Movie_Booking_App.Pages.Admin.ShowTimes.CreateModel
 @{
     ViewData["Title"] = "Add Show Time";
 }
@@ -13,7 +13,7 @@
                 </div>
                 <div class="card-body">
                     <!-- Show validation errors -->
-                    <div asp-validation-summary="All" class="alert alert-danger"></div>
+                    @* <div asp-validation-summary="All" class="alert alert-danger"></div> *@
                     
                     <form method="post" novalidate>
                         <div class="mb-3">
