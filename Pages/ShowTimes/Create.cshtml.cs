@@ -34,9 +34,47 @@ namespace Movie_Booking_App.Pages.ShowTimes
 
         public async Task<IActionResult> OnPostAsync()
         {
-            Console.WriteLine("=== CREATE SHOWTIME ATTEMPT ===");
+            // Create debug file to see what's happening
+            var debugInfo = new List<string>
+    {
+        $"=== DEBUG {DateTime.Now} ===",
+        $"MovieId: {ShowTime.MovieId}",
+        $"TheaterId: {ShowTime.TheaterId}",
+        $"ShowDateTime: {ShowTime.ShowDateTime}",
+        $"ModelState.IsValid: {ModelState.IsValid}",
+        $"ModelState Error Count: {ModelState.ErrorCount}"
+    };
 
-            // Custom validation
+            // Log all ModelState errors
+            foreach (var key in ModelState.Keys)
+            {
+                var state = ModelState[key];
+                if (state.Errors.Count > 0)
+                {
+                    debugInfo.Add($"ERROR - {key}: {string.Join(", ", state.Errors.Select(e => e.ErrorMessage))}");
+                }
+            }
+
+            // Write to file immediately
+            System.IO.File.WriteAllLines("debug_showtime.txt", debugInfo);
+
+            Console.WriteLine("=== CREATE SHOWTIME ATTEMPT ===");
+            Console.WriteLine($"STEP 1 - IMMEDIATELY AFTER BINDING:");
+            Console.WriteLine($"  ShowTime.MovieId = {ShowTime.MovieId}");
+            Console.WriteLine($"  ShowTime.TheaterId = {ShowTime.TheaterId}");
+            Console.WriteLine($"  ModelState.IsValid = {ModelState.IsValid}");
+
+            // Check ModelState errors BEFORE any validation
+            foreach (var key in ModelState.Keys)
+            {
+                var state = ModelState[key];
+                if (state.Errors.Count > 0)
+                {
+                    Console.WriteLine($"  ModelState Error - {key}: {string.Join(", ", state.Errors.Select(e => e.ErrorMessage))}");
+                }
+            }
+
+            // Rest of your code...
             await ValidateShowTime();
 
             if (!ModelState.IsValid)
@@ -77,6 +115,10 @@ namespace Movie_Booking_App.Pages.ShowTimes
                 await _context.SaveChangesAsync();
 
                 Console.WriteLine($"✅ SUCCESS: ShowTime created with ID: {ShowTime.Id}");
+
+                // Log success to file
+                System.IO.File.AppendAllLines("debug_showtime.txt", new[] { $"SUCCESS: ShowTime created with ID: {ShowTime.Id}" });
+
                 return RedirectToPage("./Index");
             }
             catch (DbUpdateException dbEx)
@@ -114,63 +156,82 @@ namespace Movie_Booking_App.Pages.ShowTimes
                 return Page();
             }
         }
-
         private async Task ValidateShowTime()
         {
+            Console.WriteLine($"VALIDATION CHECK - MovieId: {ShowTime.MovieId}, TheaterId: {ShowTime.TheaterId}");
+
+            bool hasErrors = false;
+
+            // Check for valid IDs but DON'T return early
+            if (ShowTime.MovieId <= 0)
+            {
+                ModelState.AddModelError("ShowTime.MovieId", "Please select a valid movie.");
+                hasErrors = true;
+            }
+
+            if (ShowTime.TheaterId <= 0)
+            {
+                ModelState.AddModelError("ShowTime.TheaterId", "Please select a valid theater.");
+                hasErrors = true;
+            }
+
+            // If basic validation failed, skip database checks
+            if (hasErrors) return;
+
             // Validate Movie exists and is active
-            var movieExists = await _context.Movies
-                .AnyAsync(m => m.Id == ShowTime.MovieId && m.IsActive);
-            if (!movieExists)
+            var movie = await _context.Movies
+                .FirstOrDefaultAsync(m => m.Id == ShowTime.MovieId && m.IsActive);
+            if (movie == null)
             {
                 ModelState.AddModelError("ShowTime.MovieId", "Selected movie is not available.");
+                hasErrors = true;
             }
 
             // Validate Theater exists and is active
-            var theaterExists = await _context.Theaters
-                .AnyAsync(t => t.Id == ShowTime.TheaterId && t.IsActive);
-            if (!theaterExists)
+            var theater = await _context.Theaters
+                .FirstOrDefaultAsync(t => t.Id == ShowTime.TheaterId && t.IsActive);
+            if (theater == null)
             {
                 ModelState.AddModelError("ShowTime.TheaterId", "Selected theater is not available.");
+                hasErrors = true;
             }
 
-            // Validate ShowDateTime is in the future
-            if (ShowTime.ShowDateTime <= DateTime.Now)
+            // Only check other validations if movie and theater are valid
+            if (!hasErrors)
             {
-                ModelState.AddModelError("ShowTime.ShowDateTime", "Show time must be in the future.");
-            }
-
-            // Validate against very distant future dates
-            if (ShowTime.ShowDateTime > DateTime.Now.AddYears(1))
-            {
-                ModelState.AddModelError("ShowTime.ShowDateTime", "Show time cannot be more than 1 year in the future.");
-            }
-
-            // Validate positive values
-            if (ShowTime.TicketPrice <= 0)
-            {
-                ModelState.AddModelError("ShowTime.TicketPrice", "Ticket price must be greater than 0.");
-            }
-
-            if (ShowTime.TotalSeats <= 0)
-            {
-                ModelState.AddModelError("ShowTime.TotalSeats", "Total seats must be greater than 0.");
-            }
-
-            // Check for overlapping show times (same theater within 3 hours)
-            if (movieExists && theaterExists && ShowTime.ShowDateTime > DateTime.Now)
-            {
-                var existingShowTime = await _context.ShowTimes
-                    .Include(st => st.Movie)
-                    .Where(st => st.TheaterId == ShowTime.TheaterId)
-                    .Where(st => st.ShowDateTime >= ShowTime.ShowDateTime.AddHours(-3) &&
-                                 st.ShowDateTime <= ShowTime.ShowDateTime.AddHours(3))
-                    .FirstOrDefaultAsync();
-
-                if (existingShowTime != null)
+                // Validate against very distant future (optional)
+                if (ShowTime.ShowDateTime > DateTime.Now.AddYears(1))
                 {
-                    ModelState.AddModelError("ShowTime.ShowDateTime",
-                        $"Theater is already booked for another show at {existingShowTime.ShowDateTime:g} " +
-                        $"(Movie: {existingShowTime.Movie?.Title}). Please choose a different time.");
+                    ModelState.AddModelError("ShowTime.ShowDateTime", "Show time cannot be more than 1 year in the future.");
+                }
+
+                // Validate positive values
+                if (ShowTime.TicketPrice <= 0)
+                {
+                    ModelState.AddModelError("ShowTime.TicketPrice", "Ticket price must be greater than 0.");
+                }
+
+                if (ShowTime.TotalSeats <= 0)
+                {
+                    ModelState.AddModelError("ShowTime.TotalSeats", "Total seats must be greater than 0.");
+                }
+
+                // Check for overlapping show times
+                if (ShowTime.ShowDateTime > DateTime.Now)
+                {
+                    var existingShowTime = await _context.ShowTimes
+                        .Include(st => st.Movie)
+                        .Where(st => st.TheaterId == ShowTime.TheaterId)
+                        .Where(st => st.ShowDateTime >= ShowTime.ShowDateTime.AddHours(-3) &&
+                                     st.ShowDateTime <= ShowTime.ShowDateTime.AddHours(3))
+                        .FirstOrDefaultAsync();
+
+                    if (existingShowTime != null)
+                    {
+                        ModelState.AddModelError("ShowTime.ShowDateTime",
+                            $"Theater is already booked for another show at {existingShowTime.ShowDateTime:g} " +
+                            $"(Movie: {existingShowTime.Movie?.Title}). Please choose a different time.");
+                    }
                 }
             }
         }

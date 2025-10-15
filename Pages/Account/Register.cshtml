@@ -1,9 +1,13 @@
 ﻿@page
-@model Movie_Booking_App.Pages.Account.RegisterModel
-@{
-    ViewData["Title"] = "Register";
-}
 
+@model Movie_Booking_App.Pages.Account.RegisterModel
+
+@{
+
+    ViewData["Title"] = "Register";
+
+}
+ 
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -16,17 +20,17 @@
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
 
                         <div class="form-group mb-3">
-                            <label asp-for="Input.FullName" class="form-label"></label>
-                            <input asp-for="Input.FullName" class="form-control" />
-                            <span asp-validation-for="Input.FullName" class="text-danger"></span>
-                        </div>
-
+<label asp-for="Input.FullName" class="form-label"></label>
+<input asp-for="Input.FullName" class="form-control" />
+<span asp-validation-for="Input.FullName" class="text-danger"></span>
+</div>
+ 
                         <div class="form-group mb-3">
-                            <label asp-for="Input.Email" class="form-label"></label>
-                            <input asp-for="Input.Email" class="form-control" />
-                            <span asp-validation-for="Input.Email" class="text-danger"></span>
-                        </div>
-
+<label asp-for="Input.Email" class="form-label"></label>
+<input asp-for="Input.Email" class="form-control" />
+<span asp-validation-for="Input.Email" class="text-danger"></span>
+</div>
+ 
                         <div class="form-group mb-3">
                             <label asp-for="Input.Password" class="form-label"></label>
                             <input asp-for="Input.Password" class="form-control" type="password" />
@@ -40,16 +44,16 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100">Register</button>
-                    </form>
-                </div>
-                <div class="card-footer text-center">
-                    <p>Already have an account? <a asp-page="/Account/Login">Login here</a></p>
-                </div>
-            </div>
-        </div>
-    </div>
+</form>
 </div>
-
+<div class="card-footer text-center">
+<p>Already have an account? <a asp-page="/Account/Login">Login here</a></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+ 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

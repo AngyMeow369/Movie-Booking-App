@@ -15,7 +15,7 @@
                     <!-- Show validation errors -->
                     <div asp-validation-summary="All" class="alert alert-danger"></div>
                     
-                    <form method="post">
+                    <form method="post" novalidate>
                         <div class="mb-3">
                             <label asp-for="ShowTime.MovieId" class="form-label">Movie *</label>
                             <select asp-for="ShowTime.MovieId" class="form-control" asp-items="ViewBag.MovieId">
@@ -99,5 +99,22 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    @* <partial name="_ValidationScriptsPartial" /> *@
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.querySelector('form');
+            var submitBtn = document.querySelector('button[type="submit"]');
+            
+            form.addEventListener('submit', function(e) {
+                console.log('Form submitting...');
+                // Remove any blocking attributes
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                }
+                return true;
+            });
+        });
+    </script>
+
 }

@@ -1,4 +1,5 @@
 ﻿// Models/ShowTime.cs
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,13 +10,9 @@ namespace Movie_Booking_App.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        // REMOVE ALL [Required] ATTRIBUTES:
         public int MovieId { get; set; }
-
-        [Required]
         public int TheaterId { get; set; }
-
-        [Required]
         public DateTime ShowDateTime { get; set; }
 
         [Range(0.01, 1000.00)]
@@ -39,7 +36,10 @@ namespace Movie_Booking_App.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation
+        [ValidateNever]
         public Movie Movie { get; set; } = default!;
+
+        [ValidateNever]
         public Theater Theater { get; set; } = default!;
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 

@@ -9,6 +9,7 @@ namespace Movie_Booking_App.Pages.Admin
     [Authorize(Roles = "Admin")]
     public class IndexModel : PageModel
     {
+        //DI implementation
         private readonly ApplicationDbContext _context;
 
         public IndexModel(ApplicationDbContext context)
@@ -28,7 +29,7 @@ namespace Movie_Booking_App.Pages.Admin
             TotalTheaters = await _context.Theaters.CountAsync();
             TotalUsers = await _context.Users.CountAsync();
             TotalBookings = await _context.Bookings.CountAsync();
-            TotalShowTimes = await _context.ShowTimes.CountAsync(); // Add this line
+            TotalShowTimes = await _context.ShowTimes.CountAsync();
         }
     }
 }
