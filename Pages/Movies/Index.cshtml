@@ -19,7 +19,8 @@
                     <div class="card h-100">
                         @if (!string.IsNullOrEmpty(movie.PosterUrl))
                         {
-                            <img src="@movie.PosterUrl" class="card-img-top" alt="@movie.Title" style="height: 300px; object-fit: cover;">
+                            <img src="@movie.PosterUrl" class="card-img-top poster-img" alt="@movie.Title">
+
                         }
                         <div class="card-body">
                             <h5 class="card-title">@movie.Title</h5>
