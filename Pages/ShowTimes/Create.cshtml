@@ -99,5 +99,22 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    @* <partial name="_ValidationScriptsPartial" /> *@
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.querySelector('form');
+            var submitBtn = document.querySelector('button[type="submit"]');
+            
+            form.addEventListener('submit', function(e) {
+                console.log('Form submitting...');
+                // Remove any blocking attributes
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                }
+                return true;
+            });
+        });
+    </script>
+
 }

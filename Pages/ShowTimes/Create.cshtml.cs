@@ -34,9 +34,47 @@ namespace Movie_Booking_App.Pages.ShowTimes
 
         public async Task<IActionResult> OnPostAsync()
         {
-            Console.WriteLine("=== CREATE SHOWTIME ATTEMPT ===");
+            // Create debug file to see what's happening
+            var debugInfo = new List<string>
+    {
+        $"=== DEBUG {DateTime.Now} ===",
+        $"MovieId: {ShowTime.MovieId}",
+        $"TheaterId: {ShowTime.TheaterId}",
+        $"ShowDateTime: {ShowTime.ShowDateTime}",
+        $"ModelState.IsValid: {ModelState.IsValid}",
+        $"ModelState Error Count: {ModelState.ErrorCount}"
+    };
 
-            // Custom validation
+            // Log all ModelState errors
+            foreach (var key in ModelState.Keys)
+            {
+                var state = ModelState[key];
+                if (state.Errors.Count > 0)
+                {
+                    debugInfo.Add($"ERROR - {key}: {string.Join(", ", state.Errors.Select(e => e.ErrorMessage))}");
+                }
+            }
+
+            // Write to file immediately
+            System.IO.File.WriteAllLines("debug_showtime.txt", debugInfo);
+
+            Console.WriteLine("=== CREATE SHOWTIME ATTEMPT ===");
+            Console.WriteLine($"STEP 1 - IMMEDIATELY AFTER BINDING:");
+            Console.WriteLine($"  ShowTime.MovieId = {ShowTime.MovieId}");
+            Console.WriteLine($"  ShowTime.TheaterId = {ShowTime.TheaterId}");
+            Console.WriteLine($"  ModelState.IsValid = {ModelState.IsValid}");
+
+            // Check ModelState errors BEFORE any validation
+            foreach (var key in ModelState.Keys)
+            {
+                var state = ModelState[key];
+                if (state.Errors.Count > 0)
+                {
+                    Console.WriteLine($"  ModelState Error - {key}: {string.Join(", ", state.Errors.Select(e => e.ErrorMessage))}");
+                }
+            }
+
+            // Rest of your code...
             await ValidateShowTime();
 
             if (!ModelState.IsValid)
@@ -77,6 +115,10 @@ namespace Movie_Booking_App.Pages.ShowTimes
                 await _context.SaveChangesAsync();
 
                 Console.WriteLine($"✅ SUCCESS: ShowTime created with ID: {ShowTime.Id}");
+
+                // Log success to file
+                System.IO.File.AppendAllLines("debug_showtime.txt", new[] { $"SUCCESS: ShowTime created with ID: {ShowTime.Id}" });
+
                 return RedirectToPage("./Index");
             }
             catch (DbUpdateException dbEx)
@@ -114,26 +156,27 @@ namespace Movie_Booking_App.Pages.ShowTimes
                 return Page();
             }
         }
-
         private async Task ValidateShowTime()
         {
             Console.WriteLine($"VALIDATION CHECK - MovieId: {ShowTime.MovieId}, TheaterId: {ShowTime.TheaterId}");
 
-            // Remove the basic required checks since the [Required] attributes should handle this
-            // if (ShowTime.MovieId == 0) ... REMOVE THESE LINES
+            bool hasErrors = false;
 
-            // Only proceed with additional validation if basic fields are valid
+            // Check for valid IDs but DON'T return early
             if (ShowTime.MovieId <= 0)
             {
                 ModelState.AddModelError("ShowTime.MovieId", "Please select a valid movie.");
-                return;
+                hasErrors = true;
             }
 
             if (ShowTime.TheaterId <= 0)
             {
                 ModelState.AddModelError("ShowTime.TheaterId", "Please select a valid theater.");
-                return;
+                hasErrors = true;
             }
+
+            // If basic validation failed, skip database checks
+            if (hasErrors) return;
 
             // Validate Movie exists and is active
             var movie = await _context.Movies
@@ -141,6 +184,7 @@ namespace Movie_Booking_App.Pages.ShowTimes
             if (movie == null)
             {
                 ModelState.AddModelError("ShowTime.MovieId", "Selected movie is not available.");
+                hasErrors = true;
             }
 
             // Validate Theater exists and is active
@@ -149,15 +193,16 @@ namespace Movie_Booking_App.Pages.ShowTimes
             if (theater == null)
             {
                 ModelState.AddModelError("ShowTime.TheaterId", "Selected theater is not available.");
+                hasErrors = true;
             }
 
             // Only check other validations if movie and theater are valid
-            if (movie != null && theater != null)
+            if (!hasErrors)
             {
-                // Validate ShowDateTime is in the future
-                if (ShowTime.ShowDateTime <= DateTime.Now)
+                // Validate against very distant future (optional)
+                if (ShowTime.ShowDateTime > DateTime.Now.AddYears(1))
                 {
-                    ModelState.AddModelError("ShowTime.ShowDateTime", "Show time must be in the future.");
+                    ModelState.AddModelError("ShowTime.ShowDateTime", "Show time cannot be more than 1 year in the future.");
                 }
 
                 // Validate positive values
