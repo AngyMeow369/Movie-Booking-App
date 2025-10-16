@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Movie_Booking_App.Data;
 using Movie_Booking_App.Models;
 
-namespace Movie_Booking_App.Pages.Movies
+namespace Movie_Booking_App.Pages.Theaters
 {
     public class EditModel : PageModel
     {
@@ -16,7 +16,7 @@ namespace Movie_Booking_App.Pages.Movies
         }
 
         [BindProperty]
-        public Movie Movie { get; set; } = default!;
+        public Theater Theater { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -25,12 +25,12 @@ namespace Movie_Booking_App.Pages.Movies
                 return NotFound();
             }
 
-            var movie = await _context.Movies.FirstOrDefaultAsync(m => m.Id == id);
-            if (movie == null)
+            var theater = await _context.Theaters.FirstOrDefaultAsync(m => m.Id == id);
+            if (theater == null)
             {
                 return NotFound();
             }
-            Movie = movie;
+            Theater = theater;
             return Page();
         }
 
@@ -41,7 +41,7 @@ namespace Movie_Booking_App.Pages.Movies
                 return Page();
             }
 
-            _context.Attach(Movie).State = EntityState.Modified;
+            _context.Attach(Theater).State = EntityState.Modified;
 
             try
             {
@@ -49,7 +49,7 @@ namespace Movie_Booking_App.Pages.Movies
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MovieExists(Movie.Id))
+                if (!TheaterExists(Theater.Id))
                 {
                     return NotFound();
                 }
@@ -62,9 +62,9 @@ namespace Movie_Booking_App.Pages.Movies
             return RedirectToPage("./Index");
         }
 
-        private bool MovieExists(int id)
+        private bool TheaterExists(int id)
         {
-            return _context.Movies.Any(e => e.Id == id);
+            return _context.Theaters.Any(e => e.Id == id);
         }
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Movie_Booking_App.Data;
 using Movie_Booking_App.Models;
 
-namespace Movie_Booking_App.Pages.Movies
+namespace Movie_Booking_App.Pages.Admin.Movies
 {
     public class CreateModel : PageModel
     {

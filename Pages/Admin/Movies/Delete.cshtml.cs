@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Movie_Booking_App.Data;
 using Movie_Booking_App.Models;
 
-namespace Movie_Booking_App.Pages.Movies
+namespace Movie_Booking_App.Pages.Admin.Movies
 {
     public class DeleteModel : PageModel
     {
