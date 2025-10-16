@@ -29,6 +29,14 @@ namespace Movie_Booking_App.Pages.Admin.ShowTimes
             if (theaterId.HasValue)
                 ShowTime.TheaterId = theaterId.Value;
 
+            // ⭐ NEW: Set default show time to 2 hours from now (meets validation)
+            ShowTime.ShowDateTime = DateTime.Now.AddHours(2);
+
+            // Round to nearest 15 minutes for better UX
+            var minutes = ShowTime.ShowDateTime.Minute;
+            var roundedMinutes = (minutes / 15) * 15;
+            ShowTime.ShowDateTime = ShowTime.ShowDateTime.AddMinutes(roundedMinutes - minutes);
+
             return Page();
         }
 
@@ -172,6 +180,23 @@ namespace Movie_Booking_App.Pages.Admin.ShowTimes
             if (ShowTime.TheaterId <= 0)
             {
                 ModelState.AddModelError("ShowTime.TheaterId", "Please select a valid theater.");
+                hasErrors = true;
+            }
+
+            // ⭐ NEW: DATE VALIDATION - Must be at least today and 1 hour from now
+            var currentTime = DateTime.Now;
+            var minimumAllowedTime = currentTime.AddHours(1);
+
+            if (ShowTime.ShowDateTime.Date < DateTime.Today)
+            {
+                ModelState.AddModelError("ShowTime.ShowDateTime",
+                    "Show date cannot be in the past. Please select today or a future date.");
+                hasErrors = true;
+            }
+            else if (ShowTime.ShowDateTime < minimumAllowedTime)
+            {
+                ModelState.AddModelError("ShowTime.ShowDateTime",
+                    $"Show time must be at least 1 hour from now. Earliest allowed: {minimumAllowedTime:MMM dd, yyyy hh:mm tt}");
                 hasErrors = true;
             }
 
