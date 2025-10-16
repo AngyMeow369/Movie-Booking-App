@@ -6,41 +6,57 @@
 @attribute [Authorize]
 
 <div class="container mt-4">
-    <h3 class="mb-4"><i class="bi bi-ticket-perforated-fill me-2"></i> My Bookings</h3>
+    <h3 class="mb-4 text-warning">
+        <i class="bi bi-ticket-perforated-fill me-2"></i> My Bookings
+    </h3>
 
     @if (Model.Bookings.Any())
     {
-        <div class="row g-3">
+        <div class="list-group">
             @foreach (var booking in Model.Bookings)
             {
-                <div class="col-md-4 col-sm-6">
-                    <div class="card shadow-sm h-100 booking-card">
-                        <img src="@booking.ShowTime.Movie!.PosterUrl" class="card-img-top poster-img" alt="@booking.ShowTime.Movie!.Title">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">@booking.ShowTime.Movie!.Title</h5>
-                            <p class="card-text mb-1"><strong>Theatre:</strong> @booking.ShowTime.Theater!.Name</p>
-                            <p class="card-text mb-1"><strong>Date & Time:</strong> @booking.ShowTime.ShowDateTime.ToString("dd MMM yyyy, hh:mm tt")</p>
-                            <p class="card-text mb-1"><strong>Seats:</strong> @booking.NumberOfTickets</p>
-                            <p class="card-text mb-2"><strong>Total:</strong> @booking.TotalAmount.ToString("C")</p>
+                <div class="list-group-item list-group-item-dark mb-3 rounded shadow-sm p-3 d-flex align-items-center booking-item">
+                    <!-- Poster -->
+                    <div class="poster-container me-3">
+                        <img src="@booking.ShowTime.Movie!.PosterUrl"
+                             alt="@booking.ShowTime.Movie!.Title"
+                             class="poster-thumb rounded">
+                    </div>
 
-                            <div class="mt-auto d-flex justify-content-between align-items-center">
-                                @if (booking.Status == BookingStatus.Confirmed)
-                                {
-                                    <span class="badge bg-success">Confirmed</span>
-                                    <form method="post" asp-page-handler="CancelBooking" class="d-inline">
-                                        <input type="hidden" name="bookingId" value="@booking.Id" />
-                                        <button type="submit" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Are you sure you want to cancel this booking?');">
-                                            Cancel
-                                        </button>
-                                    </form>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">Cancelled</span>
-                                }
-                            </div>
-                        </div>
+                    <!-- Booking Details -->
+                    <div class="flex-grow-1">
+                        <h5 class="mb-1 text-light">@booking.ShowTime.Movie!.Title</h5>
+                        <p class="mb-1 text-muted">
+                            <strong>Theatre:</strong> @booking.ShowTime.Theater!.Name
+                        </p>
+                        <p class="mb-1 text-muted">
+                            <strong>Date & Time:</strong> @booking.ShowTime.ShowDateTime.ToString("dd MMM yyyy, hh:mm tt")
+                        </p>
+                        <p class="mb-1 text-muted">
+                            <strong>Seats:</strong> @booking.NumberOfTickets
+                            &nbsp; | &nbsp;
+                            <strong>Total:</strong> @booking.TotalAmount.ToString("C")
+                        </p>
+                    </div>
+
+                    <!-- Status & Actions -->
+                    <div class="text-end">
+                        @if (booking.Status == BookingStatus.Confirmed)
+                        {
+                            <span class="badge bg-success mb-2">Confirmed</span>
+                            <form method="post" asp-page-handler="CancelBooking" class="d-inline">
+                                <input type="hidden" name="bookingId" value="@booking.Id" />
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Are you sure you want to cancel this booking?');">
+                                    Cancel
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Cancelled</span>
+                        }
                     </div>
                 </div>
             }
@@ -48,24 +64,70 @@
     }
     else
     {
-        <p class="text-muted">You have no bookings yet.</p>
+        <div class="alert alert-info text-center">
+            🎬 You have no bookings yet.
+        </div>
     }
 </div>
 
 <style>
-    .poster-img {
-        width: 100%;
-        aspect-ratio: 2 / 3;
-        object-fit: cover;
-        border-radius: 0.25rem 0.25rem 0 0;
+    body {
+        background-color: #0b0c10;
+        color: #f1f1f1;
     }
 
-    .booking-card {
+    .booking-item {
+        background-color: #1c1f26;
+        border: 1px solid #2e3440;
         transition: transform 0.2s, box-shadow 0.2s;
     }
 
-        .booking-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        .booking-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
         }
+
+    .poster-container {
+        width: 80px;
+        flex-shrink: 0;
+    }
+
+    .poster-thumb {
+        width: 100%;
+        height: auto;
+        border-radius: 0.25rem;
+        object-fit: cover;
+    }
+
+    .list-group-item-dark {
+        background-color: #1c1f26;
+    }
+
+    /* Text colors adjusted for better readability */
+    .text-light {
+        color: #FFD700 !important; /* Bright gold for movie title */
+    }
+
+    .text-muted {
+        color: #c9c9c9 !important; /* Softer grey for readability */
+    }
+
+    strong {
+        color: #f8f9fa; /* Make labels like “Theatre” stand out slightly */
+    }
+
+    .btn-outline-danger {
+        border-color: #ff4d4d;
+        color: #ff4d4d;
+    }
+
+        .btn-outline-danger:hover {
+            background-color: #ff4d4d;
+            color: #fff;
+        }
+
+    h3 i {
+        color: #ffc107;
+    }
 </style>
+

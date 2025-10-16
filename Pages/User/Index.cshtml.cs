@@ -44,7 +44,7 @@ namespace Movie_Booking_App.Pages.User
             AvailableMovies = await _context.Movies
                 .Include(m => m.ShowTimes)
                 .ThenInclude(s => s.Theater)
-                .Where(m => m.IsActive && m.ShowTimes.Any(st => st.IsActive && st.AvailableSeats > 0))
+                .Where(m => m.IsActive && m.ShowTimes.Any(st => st.IsActive && st.AvailableSeats > 0)).OrderBy(m => m.Title)
                 .ToListAsync();
         }
 

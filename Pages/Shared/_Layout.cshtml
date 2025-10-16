@@ -66,6 +66,13 @@
                     </button>
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                         <ul class="navbar-nav flex-grow-1">
+                            <!-- Home Button -->
+                            <li class="nav-item">
+                                <a class="nav-link text-white"
+                                   asp-page="@(User.IsInRole(ROLE_ADMIN) ? "/Admin/Index" : "/User/Index")">
+                                    🏠 Home
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-page="/Movies/Index">🎭 Movies</a>
                             </li>
@@ -85,11 +92,11 @@
                             else
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" href="#">📚 My Bookings</a>
+                                    <a class="nav-link text-white" asp-page="/User/UserBookings/UserBookings">📚 My Bookings</a>
                                 </li>
-                                <li class="nav-item">
+                                @* <li class="nav-item">
                                     <a class="nav-link text-white" href="#">⭐ Favorites</a>
-                                </li>
+                                </li> *@
                             }
                         </ul>
 

@@ -1,0 +1,37 @@
+﻿@page "{id:int}"
+@model Movie_Booking_App.Pages.User.MovieDetails.MovieDetailsModel
+
+@{
+    ViewData["Title"] = "Movie Details";
+}
+
+<div class="container mt-5 text-light">
+    <div class="row">
+        <div class="col-md-5">
+            <img src="@Model.Movie.PosterUrl" alt="@Model.Movie.Title" class="img-fluid rounded shadow">
+        </div>
+
+        <div class="col-md-7">
+            <h2 class="text-warning mb-3">@Model.Movie.Title</h2>
+            <p><strong>Genre:</strong> @Model.Movie.Genre</p>
+            <p><strong>Language:</strong> @Model.Movie.Language</p>
+            <p><strong>Length:</strong> @(Model.Movie.Duration / 60)h @(Model.Movie.Duration % 60)m</p>
+            <p><strong>Release Date:</strong> @Model.Movie.ReleaseDate.ToString("dd MMM yyyy")</p>
+            <p class="mt-3"><strong>Description:</strong></p>
+            <p>@Model.Movie.Description</p>
+
+            <a asp-page="/User/BookMovie/BookMovie" asp-route-id="@Model.Movie.Id" class="btn btn-primary mt-3">Book Now</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #0b0c10;
+        color: #f1f1f1;
+    }
+
+    img {
+        border-radius: 0.5rem;
+    }
+</style>
