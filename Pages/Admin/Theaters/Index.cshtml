@@ -1,49 +1,280 @@
 ﻿@page
 @model Movie_Booking_App.Pages.Theaters.IndexModel
 @{
-    ViewData["Title"] = "Theaters";
+    ViewData["Title"] = "Theater Management";
 }
 
-<div class="container mt-4">
+<div class="container-fluid mt-4">
+    <!-- Header Section -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Theaters</h1>
-        <a asp-page="Create" class="btn btn-primary">Add New Theater</a>
+        <div>
+            <h1 class="h3 mb-1">Theater Management</h1>
+            <p class="text-muted">Manage all theaters and their showtimes</p>
+        </div>
+        <a asp-page="Create" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i> Add New Theater
+        </a>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Total Theaters</div>
+                            <div class="h5 mb-0">@Model.Theaters.Count</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-theater-masks fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Active Theaters</div>
+                            <div class="h5 mb-0">@Model.Theaters.Count(t => t.IsActive)</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-play-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Inactive Theaters</div>
+                            <div class="h5 mb-0">@Model.Theaters.Count(t => !t.IsActive)</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-pause-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-info text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Cities</div>
+                            <div class="h5 mb-0">@Model.Theaters.Select(t => t.City).Distinct().Count()</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-map-marker-alt fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     @if (Model.Theaters.Any())
     {
-        <div class="row">
-            @foreach (var theater in Model.Theaters)
-            {
-                <div class="col-md-6 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">@theater.Name</h5>
-                            <p class="card-text">
-                                <strong>Location:</strong> @theater.Location<br>
-                                <strong>City:</strong> @theater.City
-                            </p>
-                            <span class="badge @(theater.IsActive ? "bg-success" : "bg-secondary")">
-                                @(theater.IsActive ? "Active" : "Inactive")
-                            </span>
-                        </div>
-                        <div class="card-footer">
-                            <div class="d-flex gap-2">
-                                <a asp-page="Edit" asp-route-id="@theater.Id" class="btn btn-warning btn-sm">Edit</a>
-                                <a asp-page="Delete" asp-route-id="@theater.Id" class="btn btn-danger btn-sm">Delete</a>
-                                <a asp-page="/Admin/ShowTimes/Create" asp-route-theaterId="@theater.Id" class="btn btn-info btn-sm">Add Show</a>
+        <!-- Theaters Grid -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-list text-primary me-2"></i>
+                    All Theaters
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Theater Name</th>
+                                <th>Location</th>
+                                <th>City</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var theater in Model.Theaters)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-light rounded p-2 me-3">
+                                                <i class="fas fa-theater-masks text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <strong class="d-block">@theater.Name</strong>
+                                                <small class="text-muted">ID: @theater.Id</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-map-marker-alt text-danger me-2 small"></i>
+                                            @theater.Location
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">
+                                            <i class="fas fa-city me-1"></i>@theater.City
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge @(theater.IsActive ? "bg-success" : "bg-secondary")">
+                                            <i class="fas @(theater.IsActive ? "fa-check-circle" : "fa-pause-circle") me-1"></i>
+                                            @(theater.IsActive ? "Active" : "Inactive")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            @theater.CreatedAt.ToString("MMM dd, yyyy")
+                                        </small>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group" role="group">
+                                            <a asp-page="Edit" asp-route-id="@theater.Id" 
+                                               class="btn btn-outline-primary btn-sm" 
+                                               title="Edit Theater">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-page="/Admin/ShowTimes/Create" asp-route-theaterId="@theater.Id" 
+                                               class="btn btn-outline-info btn-sm"
+                                               title="Add Showtime">
+                                                <i class="fas fa-plus"></i>
+                                            </a>
+                                            <a asp-page="Delete" asp-route-id="@theater.Id" 
+                                               class="btn btn-outline-danger btn-sm"
+                                               title="Delete Theater">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alternative Card View (Optional) -->
+        <div class="mt-4">
+            <h5 class="mb-3">
+                <i class="fas fa-th-large text-primary me-2"></i>
+                Theater Cards View
+            </h5>
+            <div class="row">
+                @foreach (var theater in Model.Theaters)
+                {
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card theater-card h-100 shadow-sm">
+                            <div class="card-header bg-white py-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0 text-truncate">
+                                        <i class="fas fa-theater-masks text-primary me-2"></i>
+                                        @theater.Name
+                                    </h6>
+                                    <span class="badge @(theater.IsActive ? "bg-success" : "bg-secondary")">
+                                        @(theater.IsActive ? "Active" : "Inactive")
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="theater-info mb-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                                        <span class="small">@theater.Location</span>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-city text-info me-2"></i>
+                                        <span class="small">@theater.City</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-calendar-alt text-warning me-2"></i>
+                                        <span class="small">Added @theater.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <div class="d-flex justify-content-between">
+                                    <a asp-page="Edit" asp-route-id="@theater.Id" 
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-edit me-1"></i>Edit
+                                    </a>
+                                    <a asp-page="/Admin/ShowTimes/Create" asp-route-theaterId="@theater.Id" 
+                                       class="btn btn-outline-info btn-sm">
+                                        <i class="fas fa-plus me-1"></i>Add Show
+                                    </a>
+                                    <a asp-page="Delete" asp-route-id="@theater.Id" 
+                                       class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash me-1"></i>Delete
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            }
+                }
+            </div>
         </div>
     }
     else
     {
-        <div class="alert alert-info">
-            <h4>No Theaters Found</h4>
-            <p>There are no theaters in the database yet. <a asp-page="Create">Add the first theater</a>.</p>
+        <!-- Empty State -->
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <div class="empty-state">
+                    <i class="fas fa-theater-masks fa-4x text-muted mb-3"></i>
+                    <h3 class="text-muted">No Theaters Found</h3>
+                    <p class="text-muted mb-4">Get started by adding your first theater to the system.</p>
+                    <a asp-page="Create" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus-circle me-2"></i>Add Your First Theater
+                    </a>
+                </div>
+            </div>
         </div>
     }
 </div>
+
+<style>
+    .theater-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        border: 1px solid #e3e6f0;
+    }
+    
+    .theater-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+    }
+    
+    .table tbody tr {
+        transition: background-color 0.2s ease;
+    }
+    
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .empty-state {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+</style>
+
+@section Scripts {
+    <!-- Add Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+}
