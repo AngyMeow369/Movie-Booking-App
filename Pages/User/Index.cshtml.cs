@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Movie_Booking_App.Data;
 using Movie_Booking_App.Models;
-using System.Linq;
 
 namespace Movie_Booking_App.Pages.User
 {
@@ -14,7 +13,12 @@ namespace Movie_Booking_App.Pages.User
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signManager;
+
+        public IndexModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        {
+            _context = context;
+            _userManager = userManager;
+        }
 
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
@@ -22,43 +26,51 @@ namespace Movie_Booking_App.Pages.User
         public List<Booking> Bookings { get; set; } = new();
         public List<Movie> AvailableMovies { get; set; } = new();
 
-
-        public IndexModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signManager)
-        {
-            _context = context;
-            _userManager = userManager;
-            _signManager = signManager;
-        }
-
         public async Task OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return;
+            FullName = user.FullName;
+            Email = user.Email;
 
-            FullName = user.FullName ?? string.Empty;
-            Email = user.Email ?? string.Empty;
-
-            // ✅ Fetch user's bookings + showtime + movie
-            Bookings = _context.Bookings
+            Bookings = await _context.Bookings
+                .Include(b => b.ShowTime)
+                .ThenInclude(s => s.Movie)
+                .Include(b => b.ShowTime)
+                .ThenInclude(s => s.Theater)
                 .Where(b => b.UserId == user.Id)
-                .Include(b => b.ShowTime)          // include showtime data
-                .ThenInclude(s => s.Movie)         // include movie data
                 .OrderByDescending(b => b.BookingDate)
-                .ToList();
+                .ToListAsync();
 
-            //Fetch Avilable movies
             AvailableMovies = await _context.Movies
-                .Where(m => m.IsActive)
-                .OrderBy(m => m.Title)
+                .Include(m => m.ShowTimes)
+                .ThenInclude(s => s.Theater)
+                .Where(m => m.IsActive && m.ShowTimes.Any(st => st.IsActive && st.AvailableSeats > 0))
                 .ToListAsync();
         }
 
-        //This method runs when you click logout
-        public async Task<IActionResult> OnPostLogoutAsync()
+        public async Task<IActionResult> OnPostCancelBookingAsync(int bookingId)
         {
-            await _signManager.SignOutAsync(); //clears login cookie
-            return RedirectToPage("/Account/Login"); //redirects to login page
+            var booking = await _context.Bookings
+                .Include(b => b.ShowTime)         // include showtime
+                .ThenInclude(s => s.Movie)        // include movie inside showtime
+                .FirstOrDefaultAsync(b => b.Id == bookingId);
+
+            if (booking == null || booking.Status != BookingStatus.Confirmed)
+            {
+                TempData["ErrorMessage"] = "Booking cannot be cancelled.";
+                return RedirectToPage();
+            }
+
+            // Release seats
+            booking.ShowTime.AvailableSeats += booking.NumberOfTickets;
+            booking.Status = BookingStatus.Cancelled;
+            booking.PaymentStatus = PaymentStatus.Refunded; // Optional
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"Booking for {booking.ShowTime.Movie.Title} has been cancelled.";
+            return RedirectToPage();
         }
+
     }
 }

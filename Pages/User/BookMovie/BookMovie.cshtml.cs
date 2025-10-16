@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Movie_Booking_App.Data;
 using Movie_Booking_App.Models;
 
-namespace Movie_Booking_App.Pages.User
+namespace Movie_Booking_App.Pages.User.BookMovie
 {
     [Authorize]
     public class BookMovieModel : PageModel
@@ -30,8 +30,6 @@ namespace Movie_Booking_App.Pages.User
         public int NumberOfTickets { get; set; } = 1;
 
         public Movie Movie { get; set; } = default!;
-
-        // Group showtimes by theatre
         public Dictionary<Theater, List<ShowTime>> GroupedShowTimes { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync(int id)
@@ -46,7 +44,6 @@ namespace Movie_Booking_App.Pages.User
             if (Movie == null)
                 return NotFound();
 
-            // Group showtimes by theatre
             GroupedShowTimes = Movie.ShowTimes
                 .Where(s => s.IsActive && s.AvailableSeats > 0)
                 .GroupBy(s => s.Theater)
