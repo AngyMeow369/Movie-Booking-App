@@ -1,7 +1,7 @@
-=== DEBUG 10/16/2025 10:38:46 ===
+=== DEBUG 10/16/2025 12:08:09 ===
 MovieId: 2
-TheaterId: 3
+TheaterId: 1
 ShowDateTime: 1/1/0001 0:00:00
 ModelState.IsValid: True
 ModelState Error Count: 0
-SUCCESS: ShowTime created with ID: 7
+SUCCESS: ShowTime created with ID: 8
