@@ -54,12 +54,12 @@
                     </button>
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                         <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
+                            @* <li class="nav-item">
                                 <a class="nav-link text-white" asp-page="/User/Index">🎭 Movies</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-white" href="/User/UserBookings/UserBookings">📚 My Bookings</a>
-                            </li>
+                            </li> *@
                             @* <li class="nav-item">
                                 <a class="nav-link text-white" href="#">⭐ Favorites</a>
                             </li> *@
@@ -67,9 +67,9 @@
 
                         <ul class="navbar-nav">
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle user-welcome" href="#" role="button" data-bs-toggle="dropdown">
+                                @* <a class="nav-link dropdown-toggle user-welcome" href="#" role="button" data-bs-toggle="dropdown">
                                     👋 @User.Identity.Name
-                                </a>
+                                </a> *@
                                 <ul class="dropdown-menu dropdown-menu-end p-2">
                                     <li>
                                         <a class="dropdown-item d-flex align-items-center" asp-page="/Account/EditProfile">
@@ -92,12 +92,13 @@
                         </ul>
                     </div>
                 }
-                else
+               else
                 {
+                    <!-- Navigation for Guests (Not Logged In) -->
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
                         <ul class="navbar-nav">
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-page="/Account/Login">🎭 Browse Movies</a>
+                                <a class="nav-link text-white" asp-page="/Movies/Index">🎭 Browse Movies</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-page="/Account/Login">🔐 Login</a>
