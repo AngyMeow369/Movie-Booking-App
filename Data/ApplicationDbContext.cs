@@ -15,7 +15,6 @@ namespace Movie_Booking_App.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
 
             : base(options)
-
         {
 
         }
