@@ -1,0 +1,263 @@
+﻿@page
+@model Movie_Booking_App.Pages.Admin.UserManagement.UserBookingsModel
+@{
+    ViewData["Title"] = $"Bookings - {Model.UserInfo.FullName}";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1">Booking History</h1>
+            <p class="text-muted">All bookings for @Model.UserInfo.FullName</p>
+        </div>
+        <a asp-page="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Users
+        </a>
+    </div>
+
+    <!-- User Info Card -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="card-title">
+                        <i class="fas fa-user me-2 text-primary"></i>User Information
+                    </h5>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <strong>Full Name:</strong><br>
+                            @Model.UserInfo.FullName
+                        </div>
+                        <div class="col-sm-6">
+                            <strong>Email:</strong><br>
+                            @Model.UserInfo.Email
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-sm-6">
+                            <strong>Phone:</strong><br>
+                            @(Model.UserInfo.PhoneNumber ?? "Not provided")
+                        </div>
+                        <div class="col-sm-6">
+                            <strong>Registered:</strong><br>
+                            @Model.UserInfo.CreatedAt.ToString("MMM dd, yyyy")
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="card-title">
+                        <i class="fas fa-chart-bar me-2 text-success"></i>Booking Summary
+                    </h5>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="h4 text-primary mb-0">@Model.UserStats.TotalBookings</div>
+                            <small class="text-muted">Total Bookings</small>
+                        </div>
+                        <div class="col-4">
+                            <div class="h4 text-success mb-0">@Model.UserStats.TotalTickets</div>
+                            <small class="text-muted">Total Tickets</small>
+                        </div>
+                        <div class="col-4">
+                            <div class="h4 text-info mb-0">₹@Model.UserStats.TotalSpent.ToString("N2")</div>
+                            <small class="text-muted">Total Spent</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Bookings.Any())
+    {
+        <!-- Bookings Table -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-history text-primary me-2"></i>
+                    Booking History (@Model.Bookings.Count bookings)
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Booking Details</th>
+                                <th>Movie & Show</th>
+                                <th>Theater</th>
+                                <th>Tickets & Amount</th>
+                                <th>Show Time</th>
+                                <th>Booking Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var booking in Model.Bookings)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div>
+                                            <strong class="d-block">@booking.BookingNumber</strong>
+                                            <small class="text-muted">ID: @booking.Id</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            @if (!string.IsNullOrEmpty(booking.ShowTime.Movie.PosterUrl))
+                                            {
+                                                <img src="@booking.ShowTime.Movie.PosterUrl" 
+                                                     alt="@booking.ShowTime.Movie.Title" 
+                                                     style="width: 50px; height: 70px; object-fit: cover;" 
+                                                     class="rounded me-3">
+                                            }
+                                            else
+                                            {
+                                                <div class="bg-light rounded d-flex align-items-center justify-content-center me-3" 
+                                                     style="width: 50px; height: 70px;">
+                                                    <i class="fas fa-film text-muted"></i>
+                                                </div>
+                                            }
+                                            <div>
+                                                <strong class="d-block">@booking.ShowTime.Movie.Title</strong>
+                                                <small class="text-muted d-block">
+                                                    <i class="fas fa-language me-1"></i>
+                                                    @booking.ShowTime.Language • @booking.ShowTime.Format
+                                                </small>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-clock me-1"></i>
+                                                    @booking.ShowTime.ShowDateTime.ToString("MMM dd, yyyy")
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <strong class="d-block">@booking.ShowTime.Theater.Name</strong>
+                                            <small class="text-muted d-block">
+                                                <i class="fas fa-map-marker-alt text-danger me-1"></i>
+                                                @booking.ShowTime.Theater.Location
+                                            </small>
+                                            <small class="text-muted">
+                                                <i class="fas fa-city me-1"></i>
+                                                @booking.ShowTime.Theater.City
+                                            </small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <span class="badge bg-primary me-2">
+                                                <i class="fas fa-ticket-alt me-1"></i>@booking.NumberOfTickets tickets
+                                            </span>
+                                            <br>
+                                            <strong class="text-success mt-1 d-block">
+                                                <i class="fas fa-rupee-sign me-1"></i>@booking.TotalAmount.ToString("N2")
+                                            </strong>
+                                            <small class="text-muted">
+                                                ₹@booking.ShowTime.TicketPrice.ToString("N2") per ticket
+                                            </small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock me-1"></i>
+                                            @booking.ShowTime.ShowDateTime.ToString("hh:mm tt")
+                                        </small>
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            @booking.ShowTime.ShowDateTime.ToString("MMM dd")
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            @booking.BookingDate.ToString("MMM dd, yyyy")
+                                        </small>
+                                        <br>
+                                        <small class="text-muted">
+                                            @booking.BookingDate.ToString("HH:mm")
+                                        </small>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Statistics -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-ticket-alt me-2"></i>Booking Summary</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Total Bookings:</strong><br>
+                                <span class="h5 text-primary">@Model.UserStats.TotalBookings</span>
+                            </div>
+                            <div class="col-6">
+                                <strong>Total Tickets:</strong><br>
+                                <span class="h5 text-success">@Model.UserStats.TotalTickets</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-money-bill-wave me-2"></i>Financial Summary</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Total Spent:</strong><br>
+                                <span class="h5 text-success">₹@Model.UserStats.TotalSpent.ToString("N2")</span>
+                            </div>
+                            <div class="col-6">
+                                <strong>Avg. per Booking:</strong><br>
+                                <span class="h5 text-info">₹@(Model.UserStats.TotalBookings > 0 ? (Model.UserStats.TotalSpent / Model.UserStats.TotalBookings).ToString("N2") : "0.00")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Empty Bookings State -->
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <div class="empty-state">
+                    <i class="fas fa-ticket-alt fa-4x text-muted mb-3"></i>
+                    <h3 class="text-muted">No Bookings Found</h3>
+                    <p class="text-muted mb-4">@Model.UserInfo.FullName hasn't made any bookings yet.</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .table tbody tr {
+        transition: background-color 0.2s ease;
+    }
+    
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .empty-state {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .badge {
+        font-size: 0.75em;
+    }
+</style>

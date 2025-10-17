@@ -1,99 +1,352 @@
 ﻿@page
 @model Movie_Booking_App.Pages.Admin.Movies.IndexModel
 @{
-    ViewData["Title"] = "Movies";
+    ViewData["Title"] = "Movie Management";
+    Layout = "_AdminLayout";
 }
 
-<div class="container mt-4">
+<div class="container-fluid mt-4">
+    <!-- Header Section -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="text-warning"><i class="bi bi-film me-2"></i> Movies</h1>
-        <a asp-page="Create" class="btn btn-primary">🎬 Add New Movie</a>
+        <div>
+            <h1 class="h3 mb-1">Movie Management</h1>
+            <p class="text-muted">Manage all movies and their showtimes</p>
+        </div>
+        <a asp-page="Create" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-2"></i>Add New Movie
+        </a>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Total Movies</div>
+                            <div class="h5 mb-0">@Model.Movies.Count</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-film fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Active Movies</div>
+                            <div class="h5 mb-0">@Model.Movies.Count(m => m.IsActive)</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-play-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Inactive Movies</div>
+                            <div class="h5 mb-0">@Model.Movies.Count(m => !m.IsActive)</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-pause-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-info text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Upcoming Releases</div>
+                            <div class="h5 mb-0">@Model.Movies.Count(m => m.ReleaseDate > DateTime.Now)</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-plus fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     @if (Model.Movies.Any())
     {
-        <div class="row">
-            @foreach (var movie in Model.Movies)
-            {
-                <div class="col-md-6 col-lg-3 mb-4">
-                    <div class="card h-100 movie-card shadow-sm border-0 bg-dark text-white">
-                        @if (!string.IsNullOrEmpty(movie.PosterUrl))
-                        {
-                            <div class="poster-container">
-                                <img src="@movie.PosterUrl" class="card-img-top poster-img" alt="@movie.Title">
+        <!-- Movies Grid View -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-th-large text-primary me-2"></i>
+                    All Movies (@Model.Movies.Count)
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    @foreach (var movie in Model.Movies)
+                    {
+                        <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                            <div class="card movie-card h-100 shadow-sm">
+                                <div class="position-relative">
+                                    @if (!string.IsNullOrEmpty(movie.PosterUrl))
+                                    {
+                                        <img src="@movie.PosterUrl" class="card-img-top" alt="@movie.Title" style="height: 350px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 350px;">
+                                            <i class="fas fa-film fa-3x text-muted"></i>
+                                        </div>
+                                    }
+                                    <div class="position-absolute top-0 end-0 m-2">
+                                        <span class="badge @(movie.IsActive ? "bg-success" : "bg-secondary")">
+                                            <i class="fas @(movie.IsActive ? "fa-play" : "fa-pause") me-1"></i>
+                                            @(movie.IsActive ? "Now Showing" : "Coming Soon")
+                                        </span>
+                                    </div>
+                                    @if (movie.ReleaseDate > DateTime.Now)
+                                    {
+                                        <div class="position-absolute top-0 start-0 m-2">
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="fas fa-clock me-1"></i>
+                                                Coming @movie.ReleaseDate.ToString("MMM dd")
+                                            </span>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title mb-2 text-truncate" title="@movie.Title">@movie.Title</h6>
+                                    <div class="movie-meta mb-3">
+                                        <div class="d-flex flex-wrap gap-2 mb-2">
+                                            <span class="badge bg-primary">
+                                                <i class="fas fa-tag me-1"></i>@movie.Genre
+                                            </span>
+                                            <span class="badge bg-info text-dark">
+                                                <i class="fas fa-clock me-1"></i>@movie.Duration mins
+                                            </span>
+                                            <span class="badge bg-secondary">
+                                                <i class="fas fa-language me-1"></i>@movie.Language
+                                            </span>
+                                        </div>
+                                        <div class="text-muted small">
+                                            <i class="fas fa-calendar-alt me-1"></i>
+                                            Released @movie.ReleaseDate.ToString("MMM dd, yyyy")
+                                        </div>
+                                    </div>
+                                    <p class="card-text text-muted small movie-description">
+                                        @(movie.Description.Length > 120 ? movie.Description.Substring(0, 120) + "..." : movie.Description)
+                                    </p>
+                                </div>
+                                <div class="card-footer bg-white">
+                                    <div class="d-grid gap-2">
+                                        <div class="btn-group w-100" role="group">
+                                            <a asp-page="Edit" asp-route-id="@movie.Id" 
+                                               class="btn btn-outline-primary btn-sm"
+                                               title="Edit Movie">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-page="/Admin/ShowTimes/Create" asp-route-movieId="@movie.Id" 
+                                               class="btn btn-outline-info btn-sm"
+                                               title="Add Showtime">
+                                                <i class="fas fa-plus"></i>
+                                            </a>
+                                            <a asp-page="Delete" asp-route-id="@movie.Id" 
+                                               class="btn btn-outline-danger btn-sm"
+                                               title="Delete Movie">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar-plus me-1"></i>
+                                                @movie.CreatedAt.ToString("MMM dd, yyyy")
+                                            </small>
+                                            <a asp-page="/Admin/ShowTimes/Index" asp-route-movieId="@movie.Id" 
+                                               class="btn btn-outline-success btn-sm">
+                                                <i class="fas fa-eye me-1"></i>Shows
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        }
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold text-warning">@movie.Title</h5>
-                            <p class="card-text small text-light">
-                                <strong>Genre:</strong> @movie.Genre<br>
-                                <strong>Duration:</strong> @movie.Duration minutes<br>
-                                <strong>Language:</strong> @movie.Language<br>
-                                <strong>Release:</strong> @movie.ReleaseDate.ToString("MMM dd, yyyy")
-                            </p>
-                            <p class="card-text text-muted small">
-                                @(movie.Description.Length > 100 ? movie.Description.Substring(0, 100) + "..." : movie.Description)
-                            </p>
-                            <span class="badge @(movie.IsActive ? "bg-success" : "bg-secondary")">
-                                @(movie.IsActive ? "Active" : "Inactive")
-                            </span>
                         </div>
-                        <div class="card-footer bg-transparent border-0">
-                            <div class="d-flex gap-2">
-                                <a asp-page="Edit" asp-route-id="@movie.Id" class="btn btn-warning btn-sm">✏️ Edit</a>
-                                <a asp-page="Delete" asp-route-id="@movie.Id" class="btn btn-danger btn-sm">🗑️ Delete</a>
-                                <a asp-page="/ShowTimes/Create" asp-route-movieId="@movie.Id" class="btn btn-info btn-sm">⏰ Add Show</a>
-                            </div>
-                        </div>
-                    </div>
+                    }
                 </div>
-            }
+            </div>
+        </div>
+
+        <!-- Alternative Table View -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-list text-primary me-2"></i>
+                    Movies List View
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Movie Details</th>
+                                <th>Genre & Duration</th>
+                                <th>Language</th>
+                                <th>Release Date</th>
+                                <th>Status</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var movie in Model.Movies)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            @if (!string.IsNullOrEmpty(movie.PosterUrl))
+                                            {
+                                                <img src="@movie.PosterUrl" 
+                                                     alt="@movie.Title" 
+                                                     style="width: 60px; height: 80px; object-fit: cover;" 
+                                                     class="rounded me-3">
+                                            }
+                                            else
+                                            {
+                                                <div class="bg-light rounded d-flex align-items-center justify-content-center me-3" 
+                                                     style="width: 60px; height: 80px;">
+                                                    <i class="fas fa-film text-muted"></i>
+                                                </div>
+                                            }
+                                            <div>
+                                                <strong class="d-block">@movie.Title</strong>
+                                                <small class="text-muted text-truncate d-block" style="max-width: 200px;">
+                                                    @(movie.Description.Length > 60 ? movie.Description.Substring(0, 60) + "..." : movie.Description)
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-column gap-1">
+                                            <span class="badge bg-primary">
+                                                <i class="fas fa-tag me-1"></i>@movie.Genre
+                                            </span>
+                                            <span class="badge bg-info text-dark">
+                                                <i class="fas fa-clock me-1"></i>@movie.Duration mins
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-language me-1"></i>@movie.Language
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar-alt me-1"></i>
+                                            @movie.ReleaseDate.ToString("MMM dd, yyyy")
+                                        </small>
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="fas @(movie.ReleaseDate > DateTime.Now ? "fa-clock text-warning" : "fa-check text-success") me-1"></i>
+                                            @(movie.ReleaseDate > DateTime.Now ? "Upcoming" : "Released")
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <span class="badge @(movie.IsActive ? "bg-success" : "bg-secondary")">
+                                            <i class="fas @(movie.IsActive ? "fa-play" : "fa-pause") me-1"></i>
+                                            @(movie.IsActive ? "Active" : "Inactive")
+                                        </span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group" role="group">
+                                            <a asp-page="Edit" asp-route-id="@movie.Id" 
+                                               class="btn btn-outline-primary btn-sm"
+                                               title="Edit Movie">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-page="/Admin/ShowTimes/Create" asp-route-movieId="@movie.Id" 
+                                               class="btn btn-outline-info btn-sm"
+                                               title="Add Showtime">
+                                                <i class="fas fa-plus"></i>
+                                            </a>
+                                            <a asp-page="Delete" asp-route-id="@movie.Id" 
+                                               class="btn btn-outline-danger btn-sm"
+                                               title="Delete Movie">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     }
     else
     {
-        <div class="alert alert-info">
-            <h4>No Movies Found</h4>
-            <p>There are no movies in the database yet. <a asp-page="Create">Add the first movie</a>.</p>
+        <!-- Empty State -->
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <div class="empty-state">
+                    <i class="fas fa-film fa-4x text-muted mb-3"></i>
+                    <h3 class="text-muted">No Movies Found</h3>
+                    <p class="text-muted mb-4">Get started by adding your first movie to the system.</p>
+                    <a asp-page="Create" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus-circle me-2"></i>Add Your First Movie
+                    </a>
+                </div>
+            </div>
         </div>
     }
 </div>
 
 <style>
-    body {
-        background-color: #0b0c10;
-        color: #f1f1f1;
-    }
-
     .movie-card {
-        transition: transform 0.2s, box-shadow 0.2s;
-        border-radius: 0.5rem;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        border: 1px solid #e3e6f0;
     }
-
-        .movie-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-
-    .poster-container {
+    
+    .movie-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+    }
+    
+    .movie-description {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
         overflow: hidden;
-        border-top-left-radius: 0.5rem;
-        border-top-right-radius: 0.5rem;
     }
-
-    .poster-img {
-        width: 100%;
-        aspect-ratio: 2 / 3;
-        object-fit: cover;
-        border-radius: 0.5rem 0.5rem 0 0;
+    
+    .table tbody tr {
+        transition: background-color 0.2s ease;
     }
-
-    .btn-sm {
-        font-size: 0.85rem;
-        padding: 0.3rem 0.5rem;
+    
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
     }
-
-    h1 i {
-        color: #ffc107;
+    
+    .empty-state {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .badge {
+        font-size: 0.75em;
+    }
+    
+    .card-img-top {
+        border-radius: 0.375rem 0.375rem 0 0;
     }
 </style>

@@ -2,6 +2,7 @@
 @model Movie_Booking_App.Pages.Admin.IndexModel
 @{
     ViewData["Title"] = "Admin Dashboard";
+    Layout = "_AdminLayout";
 }
 
 <div class="container mt-4">
@@ -122,7 +123,7 @@
             <div class="card-body">
                 <p>Manage users and view booking history.</p>
                 <div class="d-grid gap-2">
-                    <a asp-page="/Admin/Users" class="btn btn-outline-primary">View Users</a>
+                    <a asp-page="/Admin/UserManagement/Index" class="btn btn-outline-primary">View Users</a>
                     <a asp-page="/Admin/CreateUser" class="btn btn-outline-success">Create User</a>
                 </div>
             </div>
