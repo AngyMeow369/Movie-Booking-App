@@ -1,15 +1,18 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Movie_Booking_App.Data;
+using Movie_Booking_App.Interfaces;
 using Movie_Booking_App.Models;
+using Movie_Booking_App.Repositories;
+using Movie_Booking_App.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add DbContext
+// ─── Database ───────────────────────────────────────────────────────────────
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add Identity with Roles
+// ─── Identity ───────────────────────────────────────────────────────────────
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
@@ -20,16 +23,30 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// ? ADD THIS: Identity Pages
-builder.Services.AddRazorPages();
+// Override the default Identity redirect paths so they point to MVC routes
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/Login";
+});
+
+// ─── Repositories ───────────────────────────────────────────────────────────
+builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+builder.Services.AddScoped<ITheaterRepository, TheaterRepository>();
+builder.Services.AddScoped<IShowTimeRepository, ShowTimeRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+
+// ─── Services ───────────────────────────────────────────────────────────────
+builder.Services.AddScoped<IShowTimeService, ShowTimeService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
+
+// ─── MVC with Areas ─────────────────────────────────────────────────────────
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-//// ✅ 4. Use authentication & authorization
-app.UseAuthentication();
-app.UseAuthorization();
-
-// SEED ROLES AND ADMIN USER
+// ─── Seed Roles & Admin User ─────────────────────────────────────────────────
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -49,8 +66,13 @@ using (var scope = app.Services.CreateScope())
         if (!await roleManager.RoleExistsAsync("User"))
             await roleManager.CreateAsync(new IdentityRole("User"));
 
-        // Create Admin User
+        // ── HARDCODED ADMIN CREDENTIALS ─────────────────────────────────────
+        // Email:    admin@moviebook.com
+        // Password: Admin123
+        // ────────────────────────────────────────────────────────────────────
         var adminEmail = "admin@moviebook.com";
+        var adminPassword = "Admin123";
+
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
         if (adminUser == null)
         {
@@ -62,11 +84,28 @@ using (var scope = app.Services.CreateScope())
                 EmailConfirmed = true
             };
 
-            var result = await userManager.CreateAsync(user, "Admin123");
+            var result = await userManager.CreateAsync(user, adminPassword);
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(user, "Admin");
-                Console.WriteLine("? Admin user created successfully!");
+                Console.WriteLine("✅ Admin user created successfully!");
+                Console.WriteLine($"   Email:    {adminEmail}");
+                Console.WriteLine($"   Password: {adminPassword}");
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    Console.WriteLine($"❌ Admin creation error: {error.Description}");
+                }
+            }
+        }
+        else
+        {
+            // Ensure existing admin is still in the Admin role
+            if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+            {
+                await userManager.AddToRoleAsync(adminUser, "Admin");
             }
         }
     }
@@ -77,24 +116,34 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
+// ─── HTTP Pipeline ───────────────────────────────────────────────────────────
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ? ADD THIS: Map Razor Pages (including Identity pages)
-app.MapRazorPages();
+// ─── Area Routing ────────────────────────────────────────────────────────────
+app.MapAreaControllerRoute(
+    name: "AdminArea",
+    areaName: "Admin",
+    pattern: "Admin/{controller=Admin}/{action=Index}/{id?}");
 
-app.MapGet("/", () => Results.Redirect("/Account/Login"));
+app.MapAreaControllerRoute(
+    name: "UserArea",
+    areaName: "User",
+    pattern: "User/{controller=Home}/{action=Index}/{id?}");
 
-
+// Default route → Account/Login
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
 app.Run();

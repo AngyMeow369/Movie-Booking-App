@@ -1,0 +1,50 @@
+@model IEnumerable<Movie_Booking_App.Areas.Admin.Controllers.UserManagementController.UserViewModel>
+@{
+    ViewData["Title"] = "User Management";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <h2>👥 User Management</h2>
+    <p class="text-muted">View user registrations and detailed spending summaries.</p>
+
+    <div class="card shadow-sm border-0 mt-3">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Member Since</th>
+                            <th>Total Bookings</th>
+                            <th>Total Spent</th>
+                            <th>Last Booking</th>
+                            <th class="text-end" style="width: 150px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">@user.FullName</td>
+                                <td>@user.Email</td>
+                                <td>@(string.IsNullOrEmpty(user.PhoneNumber) ? "N/A" : user.PhoneNumber)</td>
+                                <td>@user.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                <td><span class="badge bg-secondary">@user.TotalBookings</span></td>
+                                <td class="fw-semibold text-success">$@user.TotalSpent.ToString("F2")</td>
+                                <td>@(user.LastBookingDate.HasValue ? user.LastBookingDate.Value.ToString("g") : "Never")</td>
+                                <td class="text-end">
+                                    <a asp-area="Admin" asp-controller="UserManagement" asp-action="UserBookings" asp-route-userId="@user.Id" class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-ticket-alt"></i> Bookings
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

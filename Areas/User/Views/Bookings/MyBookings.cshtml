@@ -1,0 +1,110 @@
+@model IEnumerable<Movie_Booking_App.Models.Booking>
+@{
+    ViewData["Title"] = "My Bookings";
+    Layout = "_UserLayout";
+}
+
+<div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4 text-start">
+        <div>
+            <h2>🎟️ My Movie Bookings</h2>
+            <p class="text-muted">Manage your tickets and see booking summaries.</p>
+        </div>
+        <a asp-area="User" asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
+            <i class="fas fa-film me-1"></i> Browse More Movies
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Booking #</th>
+                            <th>Movie</th>
+                            <th>Theater</th>
+                            <th>Order Date</th>
+                            <th>Showtime</th>
+                            <th>Tickets</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
+                            <th class="text-end" style="width: 150px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            @foreach (var booking in Model)
+                            {
+                                <tr>
+                                    <td class="fw-bold text-primary">@booking.BookingNumber</td>
+                                    <td class="fw-bold">@booking.ShowTime?.Movie?.Title</td>
+                                    <td>@booking.ShowTime?.Theater?.Name (Screen: @booking.ShowTime?.Screen)</td>
+                                    <td>@booking.BookingDate.ToString("MMM dd, yyyy hh:mm tt")</td>
+                                    <td>@booking.ShowTime?.ShowDateTime.ToString("g")</td>
+                                    <td>@booking.NumberOfTickets</td>
+                                    <td class="fw-bold text-success">$@booking.TotalAmount.ToString("F2")</td>
+                                    <td>
+                                        @if (booking.Status == Movie_Booking_App.Models.BookingStatus.Confirmed)
+                                        {
+                                            <span class="badge bg-success">Confirmed</span>
+                                        }
+                                        else if (booking.Status == Movie_Booking_App.Models.BookingStatus.Cancelled)
+                                        {
+                                            <span class="badge bg-danger">Cancelled</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        @if (booking.Status == Movie_Booking_App.Models.BookingStatus.Confirmed)
+                                        {
+                                            <form asp-area="User" asp-controller="Bookings" asp-action="CancelBooking" method="post" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                                                <input type="hidden" name="bookingId" value="@booking.Id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-times-circle me-1"></i> Cancel
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">No Action</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center py-5 text-muted">
+                                    <i class="fas fa-ticket-alt fa-3x mb-3 text-muted"></i>
+                                    <h5>No bookings found</h5>
+                                    <p>You haven't booked any movies yet.</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

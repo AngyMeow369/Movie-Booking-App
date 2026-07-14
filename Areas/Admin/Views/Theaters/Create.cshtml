@@ -1,0 +1,56 @@
+@model Movie_Booking_App.Models.Theater
+@{
+    ViewData["Title"] = "Add New Theater";
+    Layout = "_AdminLayout";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white py-3">
+                    <h5 class="mb-0 fw-bold">🎭 Add New Theater</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-area="Admin" asp-controller="Theaters" asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-semibold">Theater Name</label>
+                            <input asp-for="Name" class="form-control" placeholder="Enter theater name" required />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Location" class="form-label fw-semibold">Location / Address</label>
+                            <input asp-for="Location" class="form-control" placeholder="Enter street address" required />
+                            <span asp-validation-for="Location" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="City" class="form-label fw-semibold">City</label>
+                            <input asp-for="City" class="form-control" placeholder="Enter city" required />
+                            <span asp-validation-for="City" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check form-switch py-2 mb-3">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" checked />
+                            <label asp-for="IsActive" class="form-check-label fw-semibold">Mark Theater as Active</label>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4 pt-3 border-top">
+                            <a asp-area="Admin" asp-controller="Theaters" asp-action="Index" class="btn btn-outline-secondary me-2">Cancel</a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-1"></i> Save Theater
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

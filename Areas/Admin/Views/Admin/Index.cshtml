@@ -1,0 +1,149 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark text-white border-0 shadow-sm">
+                <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                    <div>
+                        <h2 class="mb-1 fw-bold">Welcome back, Admin!</h2>
+                        <p class="mb-0 text-muted">Here's what's happening at MovieBook today.</p>
+                    </div>
+                    <div class="d-none d-md-block">
+                        <i class="fas fa-user-shield fa-3x text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary">
+                            <i class="fas fa-film fa-2x"></i>
+                        </div>
+                        <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill">Total</span>
+                    </div>
+                    <h3 class="fw-bold mb-1">@ViewBag.TotalMovies</h3>
+                    <p class="text-muted mb-0">Active Movies</p>
+                    <a asp-area="Admin" asp-controller="Movies" asp-action="Index" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="bg-success bg-opacity-10 p-3 rounded-3 text-success">
+                            <i class="fas fa-theater-masks fa-2x"></i>
+                        </div>
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill">Active</span>
+                    </div>
+                    <h3 class="fw-bold mb-1">@ViewBag.TotalTheaters</h3>
+                    <p class="text-muted mb-0">Theaters Registered</p>
+                    <a asp-area="Admin" asp-controller="Theaters" asp-action="Index" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-3 text-warning">
+                            <i class="fas fa-calendar-alt fa-2x"></i>
+                        </div>
+                        <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill">Scheduled</span>
+                    </div>
+                    <h3 class="fw-bold mb-1">@ViewBag.TotalShowTimes</h3>
+                    <p class="text-muted mb-0">Active Showtimes</p>
+                    <a asp-area="Admin" asp-controller="ShowTimes" asp-action="Index" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="bg-info bg-opacity-10 p-3 rounded-3 text-info">
+                            <i class="fas fa-ticket-alt fa-2x"></i>
+                        </div>
+                        <span class="badge bg-info bg-opacity-10 text-info rounded-pill">Booked</span>
+                    </div>
+                    <h3 class="fw-bold mb-1">@ViewBag.TotalBookings</h3>
+                    <p class="text-muted mb-0">Total Bookings</p>
+                    <a asp-area="Admin" asp-controller="UserManagement" asp-action="Index" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links Card -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-bolt text-warning me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a asp-area="Admin" asp-controller="Movies" asp-action="Create" class="list-group-item list-group-item-action border-0 d-flex align-items-center py-3">
+                            <div class="bg-primary bg-opacity-10 p-2 rounded-2 text-primary me-3">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-semibold">Add New Movie</h6>
+                                <small class="text-muted">Introduce a new movie to catalog</small>
+                            </div>
+                        </a>
+                        <a asp-area="Admin" asp-controller="Theaters" asp-action="Create" class="list-group-item list-group-item-action border-0 d-flex align-items-center py-3">
+                            <div class="bg-success bg-opacity-10 p-2 rounded-2 text-success me-3">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-semibold">Add New Theater</h6>
+                                <small class="text-muted">Register a theater with screens</small>
+                            </div>
+                        </a>
+                        <a asp-area="Admin" asp-controller="ShowTimes" asp-action="Create" class="list-group-item list-group-item-action border-0 d-flex align-items-center py-3">
+                            <div class="bg-warning bg-opacity-10 p-2 rounded-2 text-warning me-3">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-semibold">Schedule Showtime</h6>
+                                <small class="text-muted">Set up ticket prices, screens, dates</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-users text-primary me-2"></i>User Base Summary</h5>
+                </div>
+                <div class="card-body p-4 text-center py-5">
+                    <div class="bg-info bg-opacity-10 p-4 rounded-circle d-inline-flex text-info mb-3">
+                        <i class="fas fa-users fa-3x"></i>
+                    </div>
+                    <h4 class="fw-bold">@ViewBag.TotalUsers Users Registered</h4>
+                    <p class="text-muted">Monitor registrations, transaction history, and bookings in User Management.</p>
+                    <a asp-area="Admin" asp-controller="UserManagement" asp-action="Index" class="btn btn-outline-primary">
+                        <i class="fas fa-users-cog me-1"></i>Manage Users
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
