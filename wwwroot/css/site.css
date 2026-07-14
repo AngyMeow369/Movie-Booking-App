@@ -5,12 +5,11 @@ html {
 @media (min-width: 768px) {
   html {
     font-size: 16px;
-
   }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+  box-shadow: 0 0 0 0.1rem #0f3460, 0 0 0 0.25rem #e94560;
 }
 
 html {
@@ -18,23 +17,195 @@ html {
   min-height: 100%;
 }
 
+/* Global Rich Cinematic Dark Theme */
 body {
   margin-bottom: 60px;
+  background-color: #121225; /* Very dark rich blue-gray */
+  color: #e5e5e5;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* Glassmorphic Card Style */
+.card {
+    background: rgba(30, 30, 50, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    color: #ffffff;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+    border-color: rgba(233, 69, 96, 0.3);
 }
 
-/*Poster Ratio Setup*/
+.card-header {
+    background: rgba(40, 40, 65, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-weight: 600;
+}
+
+.card-footer {
+    background: rgba(40, 40, 65, 0.6);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Form Controls Dark Theme styling */
+.form-control, .form-select {
+    background-color: #1a1a2e;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border-radius: 8px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: #1f1f3a;
+    border-color: #e94560;
+    color: #ffffff;
+    box-shadow: 0 0 0 0.25rem rgba(233, 69, 96, 0.25);
+}
+
+.form-control::placeholder {
+    color: #8888aa;
+}
+
+.form-floating > label {
+    color: #8888aa;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: #e94560;
+}
+
+/* Custom Table Styles */
+.table {
+    color: #e5e5e5;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.table th {
+    background-color: #16213e;
+    color: #ffd700;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.table td {
+    background-color: rgba(26, 26, 46, 0.4);
+    vertical-align: middle;
+}
+
+.table-striped tbody tr:nth-of-type(odd) td {
+    background-color: rgba(35, 35, 60, 0.3);
+}
+
+.table-hover tbody tr:hover td {
+    background-color: rgba(233, 69, 96, 0.1);
+    color: #ffffff;
+}
+
+/* Modal styling */
+.modal-content {
+    background-color: #1e1e32;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Custom Buttons matching Cinematic Neon Dark Scheme */
+.btn-primary {
+    background-color: #e94560;
+    border-color: #e94560;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+    background-color: #d83a52 !important;
+    border-color: #d83a52 !important;
+}
+
+.btn-outline-primary {
+    color: #e94560;
+    border-color: #e94560;
+    border-radius: 8px;
+}
+
+.btn-outline-primary:hover {
+    background-color: #e94560;
+    border-color: #e94560;
+    color: #ffffff;
+}
+
+.btn-secondary {
+    background-color: #4e4e6a;
+    border-color: #4e4e6a;
+    border-radius: 8px;
+}
+
+.btn-secondary:hover {
+    background-color: #3f3f56;
+    border-color: #3f3f56;
+}
+
+/* Text Highlights */
+.text-warning, .text-warning-custom {
+    color: #ffd700 !important;
+}
+
+.text-danger-custom {
+    color: #ff6b6b !important;
+}
+
+.text-muted {
+    color: #8888aa !important;
+}
+
+/* Poster Ratio Setup */
 .poster-img {
-    width: 100%; /* fill the width of the card */
-    aspect-ratio: 2 / 3; /* maintain 2:3 poster ratio */
-    object-fit: cover; /* crop without stretching */
-    border-radius: 4px 4px 0 0; /* rounded top corners for card */
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+}
+
+/* Badge styling */
+.badge {
+    padding: 0.5em 0.8em;
+    border-radius: 6px;
+}
+
+.bg-success {
+    background-color: #2ec4b6 !important;
+}
+
+.bg-danger {
+    background-color: #e94560 !important;
+}
+
+.bg-secondary {
+    background-color: #4e4e6a !important;
+}
+
+/* List group hover styling overrides */
+.list-group-item-action:hover, .list-group-item-action:focus {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #ffd700 !important;
+}
+.list-group-item-action:hover small, .list-group-item-action:focus small {
+    color: #e5e5e5 !important;
+}
+.list-group-item-action {
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
